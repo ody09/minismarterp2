@@ -1,0 +1,13 @@
+@extends('layouts.app')
+@section('title', __('inventory.transactions'))
+@section('content')
+<div class="page-heading"><div><span class="eyebrow">{{ __('inventory.title') }}</span><h1>{{ __('inventory.transactions') }}</h1><p class="muted">{{ __('inventory.transactions_hint') }}</p></div></div>
+<section class="card"><form method="get" class="form-grid">
+<label for="q">{{ __('inventory.reference') }}<input id="q" name="q" maxlength="100" value="{{ $filters['q'] ?? '' }}" placeholder="{{ __('inventory.search_reference') }}"></label>
+<label for="product_id">{{ __('catalog.product') }}<select id="product_id" name="product_id"><option value="">{{ __('catalog.all_products') }}</option>@foreach($products as $product)<option value="{{ $product->id }}" @selected((string) ($filters['product_id'] ?? '') === (string) $product->id)>{{ $product->name }}</option>@endforeach</select></label>
+<label for="type">{{ __('inventory.type') }}<select id="type" name="type"><option value="">{{ __('inventory.all_types') }}</option>@foreach(['receipt', 'issue', 'reversal'] as $type)<option value="{{ $type }}" @selected(($filters['type'] ?? '') === $type)>{{ __('inventory.'.$type) }}</option>@endforeach</select></label>
+<label for="from">{{ __('inventory.from') }}<input id="from" name="from" type="date" value="{{ $filters['from'] ?? '' }}"></label><label for="to">{{ __('inventory.to') }}<input id="to" name="to" type="date" value="{{ $filters['to'] ?? '' }}"></label><div class="form-actions"><button class="button">{{ __('app.search') }}</button></div>
+</form><p class="muted form-note">{{ __('inventory.time_zone') }}: {{ config('inventory.timezone') }}</p><div class="table-wrap"><table><thead><tr><th>{{ __('inventory.posted_at') }}</th><th>{{ __('inventory.type') }}</th><th>{{ __('inventory.reference') }}</th><th>{{ __('catalog.product') }}</th><th>{{ __('catalog.batch_number') }}</th><th>{{ __('inventory.quantity') }}</th><th>{{ __('inventory.actor') }}</th></tr></thead><tbody>
+@forelse($transactions as $move)<tr><td dir="ltr">{{ $move->operation->posted_at->setTimezone(config('inventory.timezone'))->format('Y-m-d H:i') }}</td><td>{{ __('inventory.'.$move->operation->type) }}</td><td><a href="{{ route('inventory.operation', $move->operation) }}">{{ $move->operation->reference }}</a></td><td>{{ $move->inventory->batch->product->name }}</td><td>{{ $move->inventory->batch->batch_number }}</td><td dir="ltr">{{ $move->quantity > 0 ? '+' : '' }}{{ $move->quantity }}</td><td>{{ $move->operation->user->name }}</td></tr>@empty<tr><td colspan="7" class="empty-state">{{ __('inventory.empty_transactions') }}</td></tr>@endforelse
+</tbody></table></div>@include('partials.pagination', ['paginator' => $transactions])</section>
+@endsection

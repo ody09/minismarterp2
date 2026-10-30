@@ -1,0 +1,14 @@
+@extends('layouts.app')
+@section('title', __($batch->exists ? 'catalog.edit_batches' : 'catalog.add_batches'))
+@section('content')
+<div class="page-heading"><div><span class="eyebrow">{{ __('catalog.master_data') }}</span><h1>{{ __($batch->exists ? 'catalog.edit_batches' : 'catalog.add_batches') }}</h1><p class="muted">{{ __('catalog.batch_hint') }}</p></div></div>
+@if($products->isEmpty())<div class="notice">{{ __('catalog.need_product') }} @can('products.manage')<a href="{{ route('products.create') }}">{{ __('catalog.add_products') }}</a>@endcan</div>@endif
+@if($batch->stock_started_at)<p class="muted">{{ __('inventory.batch_locked') }}</p>@endif
+<section class="card"><form method="post" action="{{ $batch->exists ? route('batches.update', $batch) : route('batches.store') }}">@csrf @if($batch->exists)@method('PATCH')@endif
+<div class="form-grid"><label for="product_id">{{ __('catalog.product') }}<select id="product_id" name="product_id" required @disabled($batch->exists)><option value="">{{ __('catalog.select_product') }}</option>@foreach($products as $product)<option value="{{ $product->id }}" @selected((string) ($batch->exists ? $batch->product_id : \App\Support\FormValue::old('product_id')) === (string) $product->id)>{{ $product->name }}</option>@endforeach</select>@if($batch->exists)<input type="hidden" name="product_id" value="{{ $batch->product_id }}"><small>{{ __('catalog.batch_product_fixed') }}</small>@endif</label>
+<label for="batch_number">{{ __('catalog.batch_number') }}<input id="batch_number" name="batch_number" required maxlength="100" value="{{ $batch->stock_started_at ? $batch->batch_number : \App\Support\FormValue::old('batch_number', $batch->batch_number) }}" @readonly($batch->stock_started_at !== null)></label>
+<label for="production_date">{{ __('catalog.production_date') }}<input id="production_date" type="date" name="production_date" value="{{ $batch->stock_started_at ? $batch->production_date?->format('Y-m-d') : \App\Support\FormValue::old('production_date', $batch->production_date?->format('Y-m-d')) }}" @readonly($batch->stock_started_at !== null)></label>
+<label for="expiration_date">{{ __('catalog.expiration_date') }}<input id="expiration_date" type="date" name="expiration_date" value="{{ $batch->stock_started_at ? $batch->expiration_date?->format('Y-m-d') : \App\Support\FormValue::old('expiration_date', $batch->expiration_date?->format('Y-m-d')) }}" @readonly($batch->stock_started_at !== null)></label>
+</div><p class="muted form-note">{{ __('catalog.dates_hint') }}</p><div class="form-actions"><button class="button primary" @disabled($products->isEmpty())>{{ __('app.save') }}</button><a class="button" href="{{ auth()->user()->can('batches.view') ? route('batches.index') : route(auth()->user()->landingRouteName()) }}">{{ __('app.cancel') }}</a></div>
+</form></section>
+@endsection

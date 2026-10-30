@@ -1,0 +1,9 @@
+@extends('layouts.app')
+@section('title', __('catalog.batches'))
+@section('content')
+<div class="page-heading"><div><span class="eyebrow">{{ __('catalog.master_data') }}</span><h1>{{ __('catalog.batches') }}</h1><p class="muted">{{ __('catalog.batches_hint') }}</p></div>@can('batches.manage')<a class="button primary" href="{{ route('batches.create') }}">+ {{ __('catalog.add_batches') }}</a>@endcan</div>
+<section class="card"><form class="filter-bar" method="get"><label for="q"><span class="sr-only">{{ __('catalog.search_batch') }}</span><input id="q" name="q" type="search" value="{{ $filters['q'] ?? '' }}" placeholder="{{ __('catalog.search_batch') }}" maxlength="100"></label><label for="product_id"><span class="sr-only">{{ __('catalog.product') }}</span><select id="product_id" name="product_id"><option value="">{{ __('catalog.all_products') }}</option>@foreach($products as $product)<option value="{{ $product->id }}" @selected((string) ($filters['product_id'] ?? '') === (string) $product->id)>{{ $product->name }}</option>@endforeach</select></label><button class="button">{{ __('app.search') }}</button></form>
+<div class="table-wrap"><table><thead><tr><th>{{ __('catalog.batch_number') }}</th><th>{{ __('catalog.product') }}</th><th>{{ __('catalog.production_date') }}</th><th>{{ __('catalog.expiration_date') }}</th><th>{{ __('app.actions') }}</th></tr></thead><tbody>
+@forelse($batches as $batch)<tr><td><strong>{{ $batch->batch_number }}</strong></td><td>{{ $batch->product->name }}</td><td>{{ $batch->production_date?->format('Y-m-d') ?? '—' }}</td><td>{{ $batch->expiration_date?->format('Y-m-d') ?? __('catalog.no_expiry') }}</td><td>@include('partials.master-actions', ['record' => $batch, 'resource' => 'batches'])</td></tr>@empty<tr><td colspan="5" class="empty-state">{{ __('catalog.empty_batches') }}</td></tr>@endforelse
+</tbody></table></div>@include('partials.pagination', ['paginator' => $batches])</section>
+@endsection

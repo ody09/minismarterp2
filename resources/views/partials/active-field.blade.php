@@ -1,0 +1,1 @@
+<div><input type="hidden" name="is_active" value="0"><label class="check-row" for="is_active"><input id="is_active" type="checkbox" name="is_active" value="1" @checked(\App\Support\FormValue::old('is_active', $record->exists ? $record->is_active : true))>{{ __('app.active') }}</label></div>
