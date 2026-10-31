@@ -6,6 +6,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProductBatchController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SupplierController;
@@ -21,6 +22,19 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth')->name('logout');
 Route::middleware(['auth', 'active'])->group(function () {
+    Route::get('/purchases', [PurchaseOrderController::class, 'index'])->middleware('can:purchases.view')->name('purchases.index');
+    Route::middleware('can:purchases.manage')->group(function () {
+        Route::get('/purchases/create', [PurchaseOrderController::class, 'create'])->name('purchases.create');
+        Route::post('/purchases', [PurchaseOrderController::class, 'store'])->name('purchases.store');
+        Route::get('/purchases/{purchase}/edit', [PurchaseOrderController::class, 'edit'])->name('purchases.edit');
+        Route::patch('/purchases/{purchase}', [PurchaseOrderController::class, 'update'])->name('purchases.update');
+        Route::post('/purchases/{purchase}/cancel', [PurchaseOrderController::class, 'cancel'])->name('purchases.cancel');
+    });
+    Route::middleware(['can:purchases.receive', 'can:inventory.post'])->group(function () {
+        Route::get('/purchases/{purchase}/receive', [PurchaseOrderController::class, 'receipt'])->name('purchases.receipt');
+        Route::post('/purchases/{purchase}/receive', [PurchaseOrderController::class, 'receive'])->name('purchases.receive');
+    });
+    Route::get('/purchases/{purchase}', [PurchaseOrderController::class, 'show'])->middleware('can:purchases.view')->name('purchases.show');
     Route::view('/dashboard', 'dashboard')->middleware('can:dashboard.view')->name('dashboard');
     Route::view('/account', 'dashboard')->name('account');
     Route::get('/users', [UserController::class, 'index'])->middleware('can:users.view')->name('users.index');

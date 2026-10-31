@@ -4,9 +4,9 @@ Laravel 13 / PHP 8.4+ / MySQL 8.4 / Blade.
 
 ## المرحلة الحالية | Current phase
 
-اكتملت المرحلة الثالثة: محرك المخزون وسجل الحركات وشاشات الأرصدة الفعلية والقابلة للبيع والمنتهية، مع حماية العمليات من التكرار والتزامن والعكس. تشمل الوظائف السابقة المستخدمين والصلاحيات والمنتجات والدفعات والعملاء والموردين والمستودع. الواجهة عربية وإنجليزية مع RTL/LTR. تسويات الجرد والرصيد الافتتاحي اليدوي مؤجلان.
+اكتملت المرحلة الرابعة: أوامر الشراء ومسوداتها واستلام البضاعة وربطها بالمخزون وسجل الحركات. تشمل الوظائف السابقة المستخدمين والصلاحيات والمنتجات والدفعات والعملاء والموردين والمستودع ومحرك المخزون. الواجهة عربية وإنجليزية مع RTL/LTR. تسويات الجرد والرصيد الافتتاحي اليدوي مؤجلان.
 
-Phase 3 adds a transactional internal stock ledger and read-only balance/movement/operation screens. Quantities use integer pieces with frozen carton conversion after first posting. Receipts, FEFO issues and one-time reversals are atomic and idempotent. Products and batches preserve first-stock history even at zero balance. Purchase/sales document workflows and AI remain in later phases; no public manual receipt, opening, count adjustment or reversal endpoint is exposed.
+Phase 4 adds purchase drafts, exact line/document totals, supplier history and full batch receipts linked to the transactional stock ledger. A draft can be edited or cancelled; a received/cancelled document retains its history. Quantities use integer pieces, immutable conversion snapshots and first-stock metadata protection. Concurrent/repeated receipt submissions credit stock once. Sales and AI remain in later phases; no manual opening/count adjustment or generic reversal endpoint is exposed.
 
 ## التشغيل على Windows | Windows setup
 
@@ -22,7 +22,7 @@ The Windows wrapper enables missing PDO MySQL/SQLite extensions for this process
 ## الصلاحيات | Access rules
 
 - One role per account. The initial roles are Administrator, Purchasing, Sales and Inventory.
-- The 20 implemented permissions cover existing account/master data access plus `inventory.view`, `inventory.post` and `inventory.reverse`. Posting/reversal permissions apply to the internal engine, not manual forms.
+- The 23 implemented permissions include inventory and `purchases.view`, `purchases.manage`, `purchases.receive`. Receiving requires both `purchases.receive` and `inventory.post`. Generic posting/reversal permissions apply to the internal engine, not manual stock forms.
 - New permissions are granted to the protected Administrator role. Existing customized roles are preserved; assign their new permissions explicitly in the roles screen.
 - Custom roles can use any subset of the existing permission catalogue; no public registration endpoint exists.
 - A manager cannot grant a role or permission exceeding their own access, or change a more privileged account. The system administrator role is protected.
@@ -44,23 +44,52 @@ Real MySQL regression checks are separate from the in-memory suite:
 ```powershell
 ./scripts/php.ps1 tests/MySql/stock-concurrency.php
 ./scripts/php.ps1 tests/MySql/stock-snapshot.php
+./scripts/php.ps1 tests/MySql/purchase-concurrency.php
 ./scripts/php.ps1 artisan erp:check-stock
 ```
 
 These scripts require a local/testing MySQL environment and process spawning.
 They create tagged verification records/temporary identities for independent
 connections, verify ownership and references before cleanup, and remove only their
-own fixtures. Generated worker artifacts stay under ignored `.cache/mysql-stock-tests/`.
+own fixtures. Generated worker artifacts stay under ignored `.cache/mysql-stock-tests/`
+and `.cache/mysql-purchase-tests/`.
 
 The main automated suite forces an isolated SQLite database in memory. A bootstrap guard checks the resolved configuration before database migrations and refuses cached MySQL, file SQLite or URL overrides. If tests stop at this guard, run `./scripts/php.ps1 artisan config:clear` and retry. The suite covers authentication, revoked sessions, access boundaries, privilege escalation, last-administrator protection, role changes, validation, escaped output, CSRF, safe landing pages, stock posting invariants and both languages. The standalone MySQL scripts above deliberately use the configured local database without dropping tables.
 
-Verified locally: 87 automated tests / 468 assertions, plus actual MySQL multi-process checks: competing issues have one winner with no negative stock, concurrent replay credits once, reversals and balances match, and an already-established outer REPEATABLE READ snapshot cannot hide a committed replay, actor/permission revocation or current product totals. Tagged fixtures and temporary identities were removed after verification. Earlier master-data constraint, decimal, form and access-control checks remain covered. Full HTTP workflow load testing belongs to later stabilization; SQLite alone is not evidence of MySQL locking correctness.
+Verified locally: 106 automated tests / 601 assertions, plus actual MySQL multi-process checks for competing stock issues, purchase receipts racing each other/edits/cancellation, same-key receipt replay, atomic purchase rollback, exact decimals and foreign-key history protection. An established outer REPEATABLE READ snapshot cannot hide current document/items/actor/permissions/product totals, including a draft created after that snapshot. Tagged fixtures and temporary identities were removed after verification. Full HTTP workflow load testing belongs to later stabilization; SQLite alone is not evidence of MySQL locking correctness.
+
+## المشتريات | Purchases
+
+Open `/purchases` to search by order number/supplier and filter supplier, status or
+order dates. Supplier rows link to their purchase history. Create a draft with an
+active supplier and whole piece/carton quantities. Prices apply to the selected
+unit; changing a product suggests its catalog purchase unit and price, which may
+then be edited. Changing only the unit requires reviewing its price. Totals are
+calculated on save using integer millionths (six decimals), never floats.
+
+On Receive goods, assign one existing batch or a new batch number/optional dates
+per saved line. Use separate lines to receive a product into several batches.
+Receipt adds all quantities to the main warehouse and records its actor, time,
+batch allocations and a unique stock-operation link in the same transaction.
+Changed packing requires re-saving the draft before receiving. Stale forms fail
+with a reload instruction; repeat receipt keys return the original result.
+
+Received/cancelled documents cannot be edited or deleted. A received purchase
+cannot be cancelled as a draft or reversed through the generic stock service.
+Partial receipts, payments, taxes and purchase returns are not supplied in this
+phase. Prices max 999999999.999999; line/order totals max 999999999999.999999.
 
 ## محرك المخزون | Stock engine integration
 
 `App\Services\StockLedger` provides `receive`, `issue` and `reverse`. See [the phase 3 contract](docs/phase-3.md) for argument shapes and lock/integration rules. Immutable source references and UUID idempotency keys are required. Returned operations include their current transaction collection, including replays.
 
-Future purchase/sales services must link stock operations to actual document IDs, authorize the document action and call the ledger inside the same database transaction as document status/invoice changes. References currently prepare that integration; they are not a substitute for validating a purchase/sales document. Follow the global admin-role/warehouse/product lock order and retry the enclosing transaction on a deadlock.
+`PurchaseOrders` links actual order IDs to stock operations and calls the ledger
+inside the same transaction as document state/items. `StockContext` shares current
+actor/permission checks and lock ordering. Future sales services must follow the
+same document authorization/typed-link/atomic-posting contract. Lock admin role,
+main warehouse, actor/permissions, document, supplier, ordered products and then
+batches/balances; retry the enclosing transaction on a deadlock. Model guards use
+current locking reads where document state is an invariant.
 
 The movement ledger is the source of truth; `inventory.quantity` is a transactionally maintained balance. Never directly edit balances or delete posted history. `./scripts/php.ps1 artisan erp:check-stock` reports mismatches without changing any quantity. No adjustment feature is supplied.
 
@@ -72,4 +101,6 @@ For a future production deployment: configure the web root as `public/`, PHP 8.4
 
 No queue worker, Redis, Node runtime, public API or AI service is required for this phase.
 
-See [phase 1](docs/phase-1.md), [phase 2](docs/phase-2.md) and [phase 3](docs/phase-3.md). The next phase implements purchase orders and their actual receipts; it requires a separate implementation request.
+See [phase 1](docs/phase-1.md), [phase 2](docs/phase-2.md), [phase 3](docs/phase-3.md)
+and [phase 4](docs/phase-4.md). The next phase is sales/customer pricing and stock
+issues; it requires a separate implementation request.

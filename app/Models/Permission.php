@@ -12,6 +12,7 @@ class Permission extends Model
         'batches.view', 'batches.manage', 'customers.view', 'customers.manage',
         'suppliers.view', 'suppliers.manage', 'warehouses.view', 'warehouses.manage',
         'inventory.view', 'inventory.post', 'inventory.reverse',
+        'purchases.view', 'purchases.manage', 'purchases.receive',
     ];
 
     public $timestamps = false;

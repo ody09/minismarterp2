@@ -23,6 +23,7 @@
                 <a class="{{ request()->routeIs('inventory.index', 'inventory.product') ? 'selected' : '' }}" href="{{ route('inventory.index') }}">{{ __('inventory.title') }}</a>
                 <a class="{{ request()->routeIs('inventory.transactions', 'inventory.operation') ? 'selected' : '' }}" href="{{ route('inventory.transactions') }}">{{ __('inventory.transactions') }}</a>
             @endcan
+            @can('purchases.view')<a class="{{ request()->routeIs('purchases.*') ? 'selected' : '' }}" href="{{ route('purchases.index') }}">{{ __('purchases.title') }}</a>@else @can('purchases.manage')<a href="{{ route('purchases.create') }}">{{ __('purchases.create') }}</a>@endcan @endcan
         </nav>
         <div class="sidebar-footer"><span class="status-dot"></span>{{ __('app.active') }}</div>
     </aside>
