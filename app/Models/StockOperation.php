@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class StockOperation extends Model
 {
+    public function purchaseOrder(): HasOne
+    {
+        return $this->hasOne(PurchaseOrder::class);
+    }
+
     use ImmutableStockRecord;
 
     public $timestamps = false;

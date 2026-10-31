@@ -6,13 +6,12 @@ use App\Models\Inventory;
 use App\Models\InventoryTransaction;
 use App\Models\Product;
 use App\Models\ProductBatch;
-use App\Models\Role;
+use App\Models\PurchaseOrder;
 use App\Models\StockOperation;
 use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -124,6 +123,9 @@ class StockLedger
                 return $replay;
             }
             $original = StockOperation::whereKey($original->id)->lockForUpdate()->firstOrFail();
+            if (PurchaseOrder::where('stock_operation_id', $original->id)->lockForUpdate()->first(['id'])) {
+                throw ValidationException::withMessages(['operation' => __('purchases.errors.document_reversal')]);
+            }
             $alreadyReversed = StockOperation::where('reversal_of_id', $original->id)->lockForUpdate()->first(['id']);
             if ($original->warehouse_id !== $warehouse->id || $original->type === 'reversal' || $alreadyReversed) {
                 $this->invalid('operation', 'already_reversed');
@@ -151,18 +153,7 @@ class StockLedger
 
     private function lockContext(User $actor, string $permission): Warehouse
     {
-        // Match AccessManager's first lock, then serialize stock posting. All
-        // invariant reads must be current even inside an older document snapshot.
-        Role::where('code', 'admin')->where('is_system', true)->lockForUpdate()->firstOrFail();
-        $warehouse = Warehouse::where('code', 'main')->lockForUpdate()->firstOrFail();
-        $freshActor = User::whereKey($actor->id)->lockForUpdate()->firstOrFail();
-        $allowed = DB::table('role_permissions')->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
-            ->where('role_permissions.role_id', $freshActor->role_id)->where('permissions.code', $permission)
-            ->lockForUpdate()->first(['permissions.id']);
-        Gate::forUser($freshActor)->allowIf(fn (User $user) => $user->is_active && $allowed !== null);
-        abort_unless($freshActor->auth_version === $actor->auth_version, 403);
-
-        return $warehouse;
+        return app(StockContext::class)->lock($actor, [$permission]);
     }
 
     private function fingerprint(array $data): string

@@ -240,6 +240,6 @@ class AdministrationTest extends TestCase
         $this->assertDatabaseCount('users', 0);
         $this->assertSame(0, $role->permissions()->count());
         $this->assertDatabaseCount('roles', 4);
-        $this->assertDatabaseCount('permissions', 20);
+        $this->assertDatabaseCount('permissions', 23);
     }
 }
