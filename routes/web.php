@@ -3,11 +3,13 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerPriceController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProductBatchController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\SessionController;
@@ -52,8 +54,12 @@ Route::middleware(['auth', 'active'])->group(function () {
         Route::post('/purchases/{purchase}/receive', [PurchaseOrderController::class, 'receive'])->name('purchases.receive');
     });
     Route::get('/purchases/{purchase}', [PurchaseOrderController::class, 'show'])->middleware('can:purchases.view')->name('purchases.show');
-    Route::view('/dashboard', 'dashboard')->middleware('can:dashboard.view')->name('dashboard');
-    Route::view('/account', 'dashboard')->name('account');
+    Route::get('/dashboard', DashboardController::class)->middleware('can:dashboard.view')->name('dashboard');
+    Route::view('/account', 'account')->name('account');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/sales', [ReportController::class, 'sales'])->middleware('can:reports.sales')->name('reports.sales');
+    Route::get('/reports/purchases', [ReportController::class, 'purchases'])->middleware('can:reports.purchases')->name('reports.purchases');
+    Route::get('/reports/inventory', [ReportController::class, 'inventory'])->middleware('can:reports.inventory')->name('reports.inventory');
     Route::get('/users', [UserController::class, 'index'])->middleware('can:users.view')->name('users.index');
     Route::resource('users', UserController::class)->only(['create', 'store', 'edit', 'update'])->middleware('can:users.manage');
     Route::get('/roles', [RoleController::class, 'index'])->middleware('can:roles.view')->name('roles.index');

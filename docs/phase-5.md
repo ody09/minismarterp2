@@ -69,3 +69,8 @@ All disposable tagged UI/MySQL records were cleaned with identity/reference guar
 No real user credentials or catalog records changed. Test screenshot in
 docs/screenshots/phase5-confirmed-test-en.png contains these now-removed fixtures.
 Final Arabic/English lists are screenshots of the actual application after cleanup.
+
+Phase6 follow-up: the previously deferred multi-line FEFO coverage is now automated
+in tests/Feature/ErpWorkflowTest.php and tests/MySql/workflow-reports.php. Both assert
+line/product/batch/unit/input quantity across a two-product sale with a split line,
+using real purchase receipts, replay checks, oversell failure and reconciliation.

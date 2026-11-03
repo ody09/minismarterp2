@@ -27,6 +27,7 @@
             @foreach(['sales', 'prices'] as $module)
                 @can($module.'.view')<a class="{{ request()->routeIs($module.'.*') ? 'selected' : '' }}" href="{{ route($module.'.index') }}">{{ __($module.'.title') }}</a>@else @can($module.'.manage')<a href="{{ route($module.'.create') }}">{{ __($module.'.create') }}</a>@endcan @endcan
             @endforeach
+            @canany(['reports.sales', 'reports.purchases', 'reports.inventory'])<a class="{{ request()->routeIs('reports.*') ? 'selected' : '' }}" href="{{ route('reports.index') }}">{{ __('reports.title') }}</a>@endcanany
         </nav>
         <div class="sidebar-footer"><span class="status-dot"></span>{{ __('app.active') }}</div>
     </aside>

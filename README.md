@@ -4,9 +4,11 @@ Laravel 13 / PHP 8.4+ / MySQL 8.4 / Blade.
 
 ## المرحلة الحالية | Current phase
 
-اكتملت المرحلة الخامسة: أسعار العملاء حسب الوحدة والكمية والتاريخ، وأوامر البيع واعتمادها مع الصرف من المخزون وتتبع الدفعات. تشمل المراحل السابقة المشتريات والاستلام والمستخدمين والصلاحيات والمنتجات والدفعات والعملاء والموردين والمستودع. الواجهة عربية وإنجليزية مع RTL/LTR. تسويات الجرد والرصيد الافتتاحي اليدوي مؤجلان.
+اكتملت المرحلة السادسة: لوحة ملخص الأعمال وتقارير المبيعات والمشتريات وتنبيهات المخزون الحالي، مع اختبار دورة الشراء والاستلام والبيع والصرف كاملة. تشمل المراحل السابقة أسعار العملاء وأوامر البيع والمشتريات والمستخدمين والصلاحيات والبيانات الأساسية. الواجهة عربية وإنجليزية مع RTL/LTR. تسويات الجرد والرصيد الافتتاحي اليدوي مؤجلان.
 
-Phase 5 adds versioned customer prices, automatic sales pricing, editable/cancellable
+Phase6 adds a permission-scoped business dashboard and read-only sales, purchase
+and stock-alert reports, exact aggregate money, local posting-day filters and full
+workflow verification. Phase5 provides versioned customer prices, automatic sales pricing, editable/cancellable
 sales drafts and full confirmation through a typed, atomic FEFO stock issue. Purchase
 drafts/receipts, master data and stock audit screens remain available. Money uses six
 decimal places and checked integers. Stock uses integer pieces and immutable unit
@@ -27,10 +29,13 @@ The Windows wrapper enables missing PDO MySQL/SQLite extensions for this process
 ## الصلاحيات | Access rules
 
 - One role per account. The initial roles are Administrator, Purchasing, Sales and Inventory.
-- The 28 implemented permissions include purchases, `prices.view/manage` and
+- The 31 implemented permissions include `reports.sales/purchases/inventory`, purchases, `prices.view/manage` and
   `sales.view/manage/post`. Purchase receipt needs `purchases.receive` plus
   `inventory.post`; sales confirmation needs `sales.post` plus `inventory.post`.
   Generic posting/reversal permissions apply to the internal engine, not manual forms.
+- Dashboard access alone grants no business report data. Each report permission
+  controls its matching dashboard section too; report-only users do not gain document
+  access. Account-only landing pages continue to show access details without metrics.
 - New permissions are granted to the protected Administrator role. Existing customized roles are preserved; assign their new permissions explicitly in the roles screen.
 - Custom roles can use any subset of the existing permission catalogue; no public registration endpoint exists.
 - A manager cannot grant a role or permission exceeding their own access, or change a more privileged account. The system administrator role is protected.
@@ -54,6 +59,7 @@ Real MySQL regression checks are separate from the in-memory suite:
 ./scripts/php.ps1 tests/MySql/stock-snapshot.php
 ./scripts/php.ps1 tests/MySql/purchase-concurrency.php
 ./scripts/php.ps1 tests/MySql/sales-concurrency.php
+./scripts/php.ps1 tests/MySql/workflow-reports.php
 ./scripts/php.ps1 artisan erp:check-stock
 ```
 
@@ -65,7 +71,9 @@ and `.cache/mysql-purchase-tests/`, `.cache/mysql-sales-tests/`.
 
 The main automated suite forces an isolated SQLite database in memory. A bootstrap guard checks the resolved configuration before database migrations and refuses cached MySQL, file SQLite or URL overrides. If tests stop at this guard, run `./scripts/php.ps1 artisan config:clear` and retry. The suite covers authentication, revoked sessions, access boundaries, privilege escalation, last-administrator protection, role changes, validation, escaped output, CSRF, safe landing pages, stock posting invariants and both languages. The standalone MySQL scripts above deliberately use the configured local database without dropping tables.
 
-Verified locally: 128 automated tests / 785 assertions, including customer tier/date/
+Verified locally: 140 automated tests / 893 assertions, including full purchase/receipt/
+multi-line sale/FEFO/replay/reconciliation, report scope/date/pagination/stock alerts,
+dashboard permission isolation, customer tier/date/
 unit selection, exact conversion and rounding, overlap/version guards, sales snapshots,
 FEFO confirmation/replay/rollback, stale pricing and internal/HTTP access boundaries.
 MySQL multi-process checks cover competing sales, same/different confirmation keys,
@@ -74,6 +82,36 @@ permissions despite an older REPEATABLE READ snapshot, fresh drafts after that
 snapshot, rollback/FKs and exact decimal persistence. Existing stock/purchase
 concurrency harnesses are retained. Tagged fixtures and temporary identities were
 removed. Full HTTP load testing remains future stabilization work.
+
+The MySQL workflow/report check creates actual typed purchase receipts and sales,
+asserts each allocation's product/line/unit, and verifies an exact report total of
+10000000000067.490036, beyond 64-bit integer millionths. No floating-point report
+sums are used. All tagged test identities/documents/stock are removed afterward.
+
+## لوحة الأعمال والتقارير | Business dashboard and reports
+
+`/dashboard` shows only report domains the account is permitted to view. Its period
+defaults to the current business month through today. `/reports` links to sales,
+purchases and inventory. Financial reports count confirmed sales and received
+purchases by actual posting time, not commercial order date. Date endpoints are
+inclusive business days in `INVENTORY_TIMEZONE` (Asia/Aden by default), translated
+to half-open UTC boundaries. Customer/supplier filters apply to all totals and rows.
+Money and piece totals include all filtered documents, independent of pagination;
+FEFO splits never multiply document amounts. Exact sums use installed Brick Math,
+already required by Laravel's decimal casts. Reads use the configured InnoDB
+REPEATABLE READ transaction snapshot and never adjust stock or post operations.
+
+Inventory reports are current main-warehouse balances, not a historical period.
+Active products at or below their sellable reorder level trigger low-stock alerts.
+Zero stock with reorder level0 qualifies. Expiry alerts include positive physical
+stock, including inactive products; near-expiry dates span today through today+N,
+inclusive (default30 days, selectable1..365). Expired is strictly before today.
+No-date batches are not expiry alerts. Product/batch lists paginate separately.
+Optional q/product/alert filters and report links are available in both languages.
+
+Phase5's deferred multi-line allocation test is now automated in the full workflow
+tests. Independent phase6 review found no material issue; one minor optional query
+optimization remains documented in phase6 (an unused eager-loaded user relation).
 
 ## المشتريات | Purchases
 
@@ -124,9 +162,8 @@ reversal also refuses sales-linked issues; returns need a future document workfl
 Both locales were checked in the browser, including a real tagged two-line sale:
 3 pieces at customer price 1.250001 plus 1 carton at catalog price 60.000024, total
 63.750027; allocations were line1=-3 early, line2=-7 early/-17 later. These temporary
-records were removed. Independent review found no material defects; a minor future
-coverage improvement is an automated multi-line allocation assertion (the current
-browser check covers it; automated FEFO cases use one line).
+records were removed. The earlier automated multi-line allocation coverage gap was
+closed in phase6, including actual MySQL purchase-to-sale and report verification.
 
 ## محرك المخزون | Stock engine integration
 
@@ -150,5 +187,6 @@ For a future production deployment: configure the web root as `public/`, PHP 8.4
 No queue worker, Redis, Node runtime, public API or AI service is required for this phase.
 
 See [phase 1](docs/phase-1.md), [phase 2](docs/phase-2.md), [phase 3](docs/phase-3.md)
-and [phase 4](docs/phase-4.md), [phase 5](docs/phase-5.md). Later stabilization,
-reporting and AI work require separate implementation requests.
+and [phase 4](docs/phase-4.md), [phase 5](docs/phase-5.md), [phase 6](docs/phase-6.md).
+Broader production load/deployment checks and AI training/evaluation/integration
+require separate requests; this phase does not claim production load certification.

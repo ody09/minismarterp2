@@ -38,16 +38,36 @@ Implementation defaults:
   accounting, AI, opening balances or stock count adjustments are added.
 
 Acceptance:
-- [ ] Exact filtered financial summaries, posting-day boundaries, terminal-state
+- [x] Exact filtered financial summaries, posting-day boundaries, terminal-state
   inclusion, pagination and correct piece snapshots despite FEFO splits.
-- [ ] Current stock low/near/expired rules, disabled/zero/no-date and warehouse scope.
-- [ ] Bilingual dashboard/report pages with isolated permissions and no data leakage.
-- [ ] Automated real purchase->receipt->two-product sale->split FEFO issue with replay,
+- [x] Current stock low/near/expired rules, disabled/zero/no-date and warehouse scope.
+- [x] Bilingual dashboard/report pages with isolated permissions and no data leakage.
+- [x] Automated real purchase->receipt->two-product sale->split FEFO issue with replay,
   failed oversell rollback, reconciliation and report totals; close phase5 test gap.
-- [ ] Actual MySQL workflow and large exact report total beyond PHP integer millionths,
+- [x] Actual MySQL workflow and large exact report total beyond PHP integer millionths,
   existing concurrency suites, full tests, format/Blade checks and independent review.
-- [ ] Browser verification and owned fixture cleanup; user data/credentials preserved.
+- [x] Browser verification and owned fixture cleanup; user data/credentials preserved.
 
 Workspace ruling: phase5 is authorized, completed but uncommitted in the existing
 checkout. Preserve it; phase6 extends the current feature branch. Pre-phase6 copies
 of touched existing files are in the ignored phase6 ledger workspace for scoped review.
+
+Verification on final tree: 140 tests / 893 assertions pass; all five standalone
+MySQL checks (stock concurrency/snapshot, purchases, sales, workflow/reports) pass,
+including18 workflow/report checks. Exact sum10000000000067.490036 was verified
+from actual posted documents. Reconciliation reports no mismatch. Pint, Blade
+compilation and whitespace checks pass. Phase5's multi-line allocation test gap is
+closed in both the automated feature suite and MySQL workflow harness.
+
+Independent read-only review: no material findings; reviewer independently ran
+12 tests / 108 assertions. Minor optional optimization deferred: financial rows
+eager-load a user relation unused by the report views, adding one read query per
+financial section. No production-load certification is claimed.
+
+Browser: Arabic/English dashboard, customer/day sales filters, supplier purchase
+report and stock expiry threshold were verified on owned temporary documents.
+UI sales82.500036/pieces36 and purchases9.469136/pieces60 matched their snapshots;
+prior-day filtering produced zero. Reducing near expiry from30 to7 reduced eligible
+positive batches from2 to1. Console had no errors. Test-labelled screenshots contain
+now-removed disposable records; final dashboard/report-index images show actual
+post-cleanup application data. No real user records or credentials were changed.

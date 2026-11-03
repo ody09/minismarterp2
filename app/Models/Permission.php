@@ -14,6 +14,7 @@ class Permission extends Model
         'inventory.view', 'inventory.post', 'inventory.reverse',
         'purchases.view', 'purchases.manage', 'purchases.receive',
         'prices.view', 'prices.manage', 'sales.view', 'sales.manage', 'sales.post',
+        'reports.sales', 'reports.purchases', 'reports.inventory',
     ];
 
     public $timestamps = false;

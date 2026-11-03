@@ -22,6 +22,7 @@ return [
         'phone' => 'رقم الهاتف', 'address' => 'العنوان', 'location' => 'الموقع', 'q' => 'البحث',
         'supplier_id' => 'المورد', 'customer_id' => 'العميل', 'order_date' => 'تاريخ الأمر', 'notes' => 'الملاحظات', 'items' => 'البنود', 'version' => 'إصدار السجل', 'key' => 'الإرسال',
         'unit' => 'الوحدة', 'min_quantity' => 'الحد الأدنى للكمية', 'unit_price' => 'سعر الوحدة', 'valid_from' => 'تاريخ البداية', 'valid_to' => 'تاريخ النهاية',
+        'from' => 'بداية الفترة', 'to' => 'نهاية الفترة', 'expiry_days' => 'أيام قرب الانتهاء', 'alert' => 'نوع التنبيه',
         'items.*.product_id' => 'منتج البند', 'items.*.quantity' => 'كمية البند', 'items.*.unit' => 'وحدة البند', 'items.*.unit_price' => 'سعر البند',
         'items.*.item_id' => 'البند', 'items.*.batch_id' => 'الدفعة', 'items.*.batch_number' => 'رقم الدفعة',
         'items.*.production_date' => 'تاريخ الإنتاج', 'items.*.expiration_date' => 'تاريخ الانتهاء'],
