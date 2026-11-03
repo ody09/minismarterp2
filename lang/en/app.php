@@ -20,6 +20,8 @@ return [
     'account_access' => 'Account access', 'users_hint' => 'Create accounts, assign roles and control access.',
     'roles_hint' => 'Give each role only the permissions it needs.', 'no_permissions' => 'No permissions granted.',
     'permission_labels' => [
+        'sales' => ['view' => 'View sales orders', 'manage' => 'Manage sales drafts', 'post' => 'Confirm sales and issue stock'],
+        'prices' => ['view' => 'View customer prices', 'manage' => 'Manage customer prices'],
         'purchases' => ['view' => 'View purchase orders', 'manage' => 'Manage purchase drafts', 'receive' => 'Receive purchase orders'],
         'inventory' => ['view' => 'View inventory and movements', 'post' => 'Post stock movements', 'reverse' => 'Reverse stock movements'],
         'categories' => ['view' => 'View categories', 'manage' => 'Manage categories'],

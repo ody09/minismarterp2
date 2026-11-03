@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerPriceController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProductBatchController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
@@ -22,6 +24,21 @@ Route::middleware('guest')->group(function () {
 });
 Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth')->name('logout');
 Route::middleware(['auth', 'active'])->group(function () {
+    Route::get('/prices', [CustomerPriceController::class, 'index'])->middleware('can:prices.view')->name('prices.index');
+    Route::resource('prices', CustomerPriceController::class)->only(['create', 'store', 'edit', 'update'])->middleware('can:prices.manage');
+    Route::get('/sales', [SalesOrderController::class, 'index'])->middleware('can:sales.view')->name('sales.index');
+    Route::middleware('can:sales.manage')->group(function () {
+        Route::get('/sales/create', [SalesOrderController::class, 'create'])->name('sales.create');
+        Route::post('/sales', [SalesOrderController::class, 'store'])->name('sales.store');
+        Route::get('/sales/{sale}/edit', [SalesOrderController::class, 'edit'])->name('sales.edit');
+        Route::patch('/sales/{sale}', [SalesOrderController::class, 'update'])->name('sales.update');
+        Route::post('/sales/{sale}/cancel', [SalesOrderController::class, 'cancel'])->name('sales.cancel');
+    });
+    Route::middleware(['can:sales.post', 'can:inventory.post'])->group(function () {
+        Route::get('/sales/{sale}/confirm', [SalesOrderController::class, 'review'])->name('sales.review');
+        Route::post('/sales/{sale}/confirm', [SalesOrderController::class, 'confirm'])->name('sales.confirm');
+    });
+    Route::get('/sales/{sale}', [SalesOrderController::class, 'show'])->middleware('can:sales.view')->name('sales.show');
     Route::get('/purchases', [PurchaseOrderController::class, 'index'])->middleware('can:purchases.view')->name('purchases.index');
     Route::middleware('can:purchases.manage')->group(function () {
         Route::get('/purchases/create', [PurchaseOrderController::class, 'create'])->name('purchases.create');

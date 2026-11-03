@@ -4,9 +4,14 @@ Laravel 13 / PHP 8.4+ / MySQL 8.4 / Blade.
 
 ## المرحلة الحالية | Current phase
 
-اكتملت المرحلة الرابعة: أوامر الشراء ومسوداتها واستلام البضاعة وربطها بالمخزون وسجل الحركات. تشمل الوظائف السابقة المستخدمين والصلاحيات والمنتجات والدفعات والعملاء والموردين والمستودع ومحرك المخزون. الواجهة عربية وإنجليزية مع RTL/LTR. تسويات الجرد والرصيد الافتتاحي اليدوي مؤجلان.
+اكتملت المرحلة الخامسة: أسعار العملاء حسب الوحدة والكمية والتاريخ، وأوامر البيع واعتمادها مع الصرف من المخزون وتتبع الدفعات. تشمل المراحل السابقة المشتريات والاستلام والمستخدمين والصلاحيات والمنتجات والدفعات والعملاء والموردين والمستودع. الواجهة عربية وإنجليزية مع RTL/LTR. تسويات الجرد والرصيد الافتتاحي اليدوي مؤجلان.
 
-Phase 4 adds purchase drafts, exact line/document totals, supplier history and full batch receipts linked to the transactional stock ledger. A draft can be edited or cancelled; a received/cancelled document retains its history. Quantities use integer pieces, immutable conversion snapshots and first-stock metadata protection. Concurrent/repeated receipt submissions credit stock once. Sales and AI remain in later phases; no manual opening/count adjustment or generic reversal endpoint is exposed.
+Phase 5 adds versioned customer prices, automatic sales pricing, editable/cancellable
+sales drafts and full confirmation through a typed, atomic FEFO stock issue. Purchase
+drafts/receipts, master data and stock audit screens remain available. Money uses six
+decimal places and checked integers. Stock uses integer pieces and immutable unit
+snapshots. Concurrent/repeated confirmation or receipt submissions post once. No
+manual opening/count adjustment, generic reversal UI or AI dependency is exposed.
 
 ## التشغيل على Windows | Windows setup
 
@@ -22,7 +27,10 @@ The Windows wrapper enables missing PDO MySQL/SQLite extensions for this process
 ## الصلاحيات | Access rules
 
 - One role per account. The initial roles are Administrator, Purchasing, Sales and Inventory.
-- The 23 implemented permissions include inventory and `purchases.view`, `purchases.manage`, `purchases.receive`. Receiving requires both `purchases.receive` and `inventory.post`. Generic posting/reversal permissions apply to the internal engine, not manual stock forms.
+- The 28 implemented permissions include purchases, `prices.view/manage` and
+  `sales.view/manage/post`. Purchase receipt needs `purchases.receive` plus
+  `inventory.post`; sales confirmation needs `sales.post` plus `inventory.post`.
+  Generic posting/reversal permissions apply to the internal engine, not manual forms.
 - New permissions are granted to the protected Administrator role. Existing customized roles are preserved; assign their new permissions explicitly in the roles screen.
 - Custom roles can use any subset of the existing permission catalogue; no public registration endpoint exists.
 - A manager cannot grant a role or permission exceeding their own access, or change a more privileged account. The system administrator role is protected.
@@ -45,6 +53,7 @@ Real MySQL regression checks are separate from the in-memory suite:
 ./scripts/php.ps1 tests/MySql/stock-concurrency.php
 ./scripts/php.ps1 tests/MySql/stock-snapshot.php
 ./scripts/php.ps1 tests/MySql/purchase-concurrency.php
+./scripts/php.ps1 tests/MySql/sales-concurrency.php
 ./scripts/php.ps1 artisan erp:check-stock
 ```
 
@@ -52,11 +61,19 @@ These scripts require a local/testing MySQL environment and process spawning.
 They create tagged verification records/temporary identities for independent
 connections, verify ownership and references before cleanup, and remove only their
 own fixtures. Generated worker artifacts stay under ignored `.cache/mysql-stock-tests/`
-and `.cache/mysql-purchase-tests/`.
+and `.cache/mysql-purchase-tests/`, `.cache/mysql-sales-tests/`.
 
 The main automated suite forces an isolated SQLite database in memory. A bootstrap guard checks the resolved configuration before database migrations and refuses cached MySQL, file SQLite or URL overrides. If tests stop at this guard, run `./scripts/php.ps1 artisan config:clear` and retry. The suite covers authentication, revoked sessions, access boundaries, privilege escalation, last-administrator protection, role changes, validation, escaped output, CSRF, safe landing pages, stock posting invariants and both languages. The standalone MySQL scripts above deliberately use the configured local database without dropping tables.
 
-Verified locally: 106 automated tests / 601 assertions, plus actual MySQL multi-process checks for competing stock issues, purchase receipts racing each other/edits/cancellation, same-key receipt replay, atomic purchase rollback, exact decimals and foreign-key history protection. An established outer REPEATABLE READ snapshot cannot hide current document/items/actor/permissions/product totals, including a draft created after that snapshot. Tagged fixtures and temporary identities were removed after verification. Full HTTP workflow load testing belongs to later stabilization; SQLite alone is not evidence of MySQL locking correctness.
+Verified locally: 128 automated tests / 785 assertions, including customer tier/date/
+unit selection, exact conversion and rounding, overlap/version guards, sales snapshots,
+FEFO confirmation/replay/rollback, stale pricing and internal/HTTP access boundaries.
+MySQL multi-process checks cover competing sales, same/different confirmation keys,
+edit/cancel races, overlapping prices, current catalog/customer pricing and actor/
+permissions despite an older REPEATABLE READ snapshot, fresh drafts after that
+snapshot, rollback/FKs and exact decimal persistence. Existing stock/purchase
+concurrency harnesses are retained. Tagged fixtures and temporary identities were
+removed. Full HTTP load testing remains future stabilization work.
 
 ## المشتريات | Purchases
 
@@ -79,16 +96,47 @@ cannot be cancelled as a draft or reversed through the generic stock service.
 Partial receipts, payments, taxes and purchase returns are not supplied in this
 phase. Prices max 999999999.999999; line/order totals max 999999999999.999999.
 
+## المبيعات وأسعار العملاء | Sales and customer pricing
+
+Use `/prices` for customer/product/unit quantity tiers. Minimum quantity is in the
+selected unit. Validity endpoints are inclusive; blank dates are open. Active
+periods for the same customer/product/unit/minimum cannot overlap. Deactivate rules
+instead of deleting them. Highest eligible minimum quantity wins per item.
+
+Use `/sales` to prepare a draft with customer, non-future order date, products and
+whole quantities. Duplicate product/unit rows must be combined. Saving calculates
+prices and totals on the server; client prices/totals are ignored. A matching
+customer price applies to its exact unit. Otherwise selling_price belongs to the
+product's selling_unit and is converted to the requested unit, with half-up rounding
+to six decimals for division. Conversion exceeding the supported price limit fails.
+
+Pricing uses the order date. Each item stores its name/unit/conversion/price/source
+snapshot and rule version; editing/saving explicitly re-prices the draft. Confirmation
+rechecks current pricing, active data and packing. A changed source/value/rule version
+requires reviewing and saving the draft; saved totals are never silently changed.
+Drafts do not reserve stock. Confirm sale opens a review page and posts a full FEFO
+issue using actual posting-day expiry. Its header, status, movements and balances
+commit or roll back together; repeated requests issue once. Batch allocations are
+shown by actual sale line and linked to the stock operation. Customer rows link to
+their sales history. Confirmed/cancelled documents remain immutable. Generic stock
+reversal also refuses sales-linked issues; returns need a future document workflow.
+
+Both locales were checked in the browser, including a real tagged two-line sale:
+3 pieces at customer price 1.250001 plus 1 carton at catalog price 60.000024, total
+63.750027; allocations were line1=-3 early, line2=-7 early/-17 later. These temporary
+records were removed. Independent review found no material defects; a minor future
+coverage improvement is an automated multi-line allocation assertion (the current
+browser check covers it; automated FEFO cases use one line).
+
 ## محرك المخزون | Stock engine integration
 
 `App\Services\StockLedger` provides `receive`, `issue` and `reverse`. See [the phase 3 contract](docs/phase-3.md) for argument shapes and lock/integration rules. Immutable source references and UUID idempotency keys are required. Returned operations include their current transaction collection, including replays.
 
-`PurchaseOrders` links actual order IDs to stock operations and calls the ledger
+`PurchaseOrders` and `SalesOrders` link actual order IDs to stock operations and call the ledger
 inside the same transaction as document state/items. `StockContext` shares current
-actor/permission checks and lock ordering. Future sales services must follow the
-same document authorization/typed-link/atomic-posting contract. Lock admin role,
-main warehouse, actor/permissions, document, supplier, ordered products and then
-batches/balances; retry the enclosing transaction on a deadlock. Model guards use
+actor/permission checks and lock ordering. Lock admin role,
+main warehouse, actor/permissions, document, supplier/customer, ordered products,
+customer price rows and then batches/balances; retry the enclosing transaction on a deadlock. Model guards use
 current locking reads where document state is an invariant.
 
 The movement ledger is the source of truth; `inventory.quantity` is a transactionally maintained balance. Never directly edit balances or delete posted history. `./scripts/php.ps1 artisan erp:check-stock` reports mismatches without changing any quantity. No adjustment feature is supplied.
@@ -102,5 +150,5 @@ For a future production deployment: configure the web root as `public/`, PHP 8.4
 No queue worker, Redis, Node runtime, public API or AI service is required for this phase.
 
 See [phase 1](docs/phase-1.md), [phase 2](docs/phase-2.md), [phase 3](docs/phase-3.md)
-and [phase 4](docs/phase-4.md). The next phase is sales/customer pricing and stock
-issues; it requires a separate implementation request.
+and [phase 4](docs/phase-4.md), [phase 5](docs/phase-5.md). Later stabilization,
+reporting and AI work require separate implementation requests.
