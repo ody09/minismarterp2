@@ -5,3 +5,4 @@
 </div>
 @endcan
 @if($resource === 'suppliers')@can('purchases.view')<a class="cell-note" href="{{ route('purchases.index', ['supplier_id' => $record->id]) }}">{{ __('purchases.history') }}</a>@endcan @endif
+@if($resource === 'customers')@can('sales.view')<a class="cell-note" href="{{ route('sales.index', ['customer_id' => $record->id]) }}">{{ __('sales.history') }}</a>@endcan @endif

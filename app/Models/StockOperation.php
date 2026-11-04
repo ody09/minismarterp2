@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class StockOperation extends Model
 {
+    public function salesOrder(): HasOne
+    {
+        return $this->hasOne(SalesOrder::class);
+    }
+
     public function purchaseOrder(): HasOne
     {
         return $this->hasOne(PurchaseOrder::class);

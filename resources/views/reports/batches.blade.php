@@ -1,0 +1,6 @@
+<div class="table-wrap"><table><thead><tr><th>{{ __('catalog.product') }}</th><th>{{ __('catalog.batch_number') }}</th><th>{{ __('catalog.expiration_date') }}</th><th>{{ __('inventory.quantity') }}</th><th>{{ __('catalog.status') }}</th></tr></thead><tbody>
+@forelse($batches as $batch)
+@php $expiry = $batch->expiration_date?->toDateString(); $status = !$expiry ? 'no_expiry' : ($expiry < $today ? 'alert_expired' : ($expiry <= $until ? 'alert_near' : 'valid')); @endphp
+<tr><td>@can('inventory.view')<a href="{{ route('inventory.product', $batch->product_id) }}">{{ $batch->product_name }}</a>@else{{ $batch->product_name }}@endcan @if(!$batch->product_active)<span class="muted cell-note">{{ __('app.inactive') }}</span>@endif</td><td>{{ $batch->batch_number }}</td><td dir="ltr">{{ $expiry ?? '—' }}</td><td>{{ $batch->quantity }}</td><td><span class="pill {{ $status === 'alert_expired' ? 'inactive' : ($status === 'alert_near' ? 'warning' : '') }}">{{ __('reports.'.$status) }}</span></td></tr>
+@empty<tr><td colspan="5" class="empty-state">{{ __('reports.no_batches') }}</td></tr>@endforelse
+</tbody></table></div>@if($paginated ?? false)@include('partials.pagination', ['paginator' => $batches])@endif

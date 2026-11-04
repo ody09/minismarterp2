@@ -1,0 +1,15 @@
+@extends('layouts.app')
+@section('title', $order->number())
+@section('content')
+<div class="page-heading"><div><span class="eyebrow">{{ __('sales.title') }}</span><h1 dir="ltr">{{ $order->number() }}</h1><span class="pill {{ $order->status === 'cancelled' ? 'inactive' : '' }}">{{ __('sales.'.$order->status) }}</span></div><div class="actions">@if($order->status === 'draft')@can('sales.manage')<a class="button" href="{{ route('sales.edit', $order) }}">{{ __('sales.edit') }}</a>@endcan @can('sales.post')@can('inventory.post')<a class="button primary" href="{{ route('sales.review', $order) }}">{{ __('sales.confirm') }}</a>@endcan @endcan @endif</div></div>
+<section class="card"><dl class="purchase-details">
+<div><dt>{{ __('prices.customer') }}</dt><dd>{{ $order->customer_name }}</dd></div><div><dt>{{ __('purchases.order_date') }}</dt><dd dir="ltr">{{ $order->order_date->toDateString() }}</dd></div><div><dt>{{ __('purchases.created_by') }}</dt><dd>{{ $order->user->name }}</dd></div>
+@if($order->confirmed_at)<div><dt>{{ __('sales.confirmed_by') }}</dt><dd>{{ $order->confirmer->name }}</dd></div><div><dt>{{ __('sales.confirmed_at') }}</dt><dd dir="ltr">{{ $order->confirmed_at->setTimezone(config('inventory.timezone'))->format('Y-m-d H:i') }}</dd></div>@endif
+@if($order->cancelled_at)<div><dt>{{ __('purchases.cancelled_by') }}</dt><dd>{{ $order->canceller->name }}</dd></div><div><dt>{{ __('purchases.cancelled_at') }}</dt><dd dir="ltr">{{ $order->cancelled_at->setTimezone(config('inventory.timezone'))->format('Y-m-d H:i') }}</dd></div>@endif
+</dl>@if($order->notes !== null)<p class="purchase-notes">{{ $order->notes }}</p>@endif</section>
+<section class="card"><h2>{{ __('purchases.lines') }}</h2>@include('sales.items')<div class="form-actions"><a class="button" href="{{ route('sales.index') }}">{{ __('sales.back') }}</a>@if($order->stock_operation_id)@can('inventory.view')<a class="button" href="{{ route('inventory.operation', $order->stock_operation_id) }}">{{ __('sales.stock_link') }}</a>@endcan @endif</div></section>
+@if($allocations)
+<section class="card"><h2>{{ __('sales.allocations') }}</h2><div class="table-wrap"><table><thead><tr><th>{{ __('inventory.line') }}</th><th>{{ __('catalog.batch_number') }}</th><th>{{ __('inventory.quantity') }}</th></tr></thead><tbody>@foreach($allocations as $move)<tr><td><a href="#sale-line-{{ $move->line_number }}">{{ $move->line_number }}</a></td><td>{{ $move->inventory->batch->batch_number }}</td><td dir="ltr">{{ $move->quantity }}</td></tr>@endforeach</tbody></table></div>@include('partials.pagination', ['paginator' => $allocations])</section>
+@endif
+@if($order->status === 'draft')@can('sales.manage')<form method="post" action="{{ route('sales.cancel', $order) }}" data-confirm="{{ __('purchases.confirm_cancel') }}">@csrf<input type="hidden" name="version" value="{{ $order->version }}"><button class="button danger">{{ __('sales.cancel_order') }}</button></form>@endcan @else<p class="muted">{{ __('sales.terminal_hint') }}</p>@endif
+@endsection

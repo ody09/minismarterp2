@@ -35,7 +35,8 @@ if (purchaseForm) {
         if (!option?.value) return;
         const row = event.target.closest('[data-purchase-line]');
         row.querySelector('[data-field="unit"]').value = option.dataset.unit;
-        row.querySelector('[data-field="unit_price"]').value = option.dataset.price;
+        const priceInput = row.querySelector('[data-field="unit_price"]');
+        if (priceInput) priceInput.value = option.dataset.price;
     });
     reindex();
 }

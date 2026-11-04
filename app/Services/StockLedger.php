@@ -7,6 +7,7 @@ use App\Models\InventoryTransaction;
 use App\Models\Product;
 use App\Models\ProductBatch;
 use App\Models\PurchaseOrder;
+use App\Models\SalesOrder;
 use App\Models\StockOperation;
 use App\Models\User;
 use App\Models\Warehouse;
@@ -125,6 +126,9 @@ class StockLedger
             $original = StockOperation::whereKey($original->id)->lockForUpdate()->firstOrFail();
             if (PurchaseOrder::where('stock_operation_id', $original->id)->lockForUpdate()->first(['id'])) {
                 throw ValidationException::withMessages(['operation' => __('purchases.errors.document_reversal')]);
+            }
+            if (SalesOrder::where('stock_operation_id', $original->id)->lockForUpdate()->first(['id'])) {
+                throw ValidationException::withMessages(['operation' => __('sales.errors.document_reversal')]);
             }
             $alreadyReversed = StockOperation::where('reversal_of_id', $original->id)->lockForUpdate()->first(['id']);
             if ($original->warehouse_id !== $warehouse->id || $original->type === 'reversal' || $alreadyReversed) {
