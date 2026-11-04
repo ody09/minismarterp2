@@ -30,13 +30,9 @@
         }
     },
     "scripts": {
-        "setup": [
-            "composer install",
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-        ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "@php artisan serve --no-reload"
+            "@php scripts/setup.php serve"
         ],
         "test": [
             "@php artisan config:clear --ansi",

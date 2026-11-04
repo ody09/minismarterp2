@@ -17,14 +17,58 @@ manual opening/count adjustment, generic reversal UI or AI dependency is exposed
 
 ## التشغيل على Windows | Windows setup
 
-1. Run `composer install` in this folder. Node/npm and a frontend build are not required.
-2. On a fresh checkout only, copy `.env.example` to `.env` if it does not already exist, then run `./scripts/php.ps1 artisan key:generate`. Do not replace an existing `.env` or regenerate a deployed application's key.
-3. Create a new empty MySQL database named `smart_mini_erp` and a dedicated database user. Set `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD` in `.env`. Keep credentials out of Git and chat.
-4. Run `./scripts/php.ps1 artisan migrate --seed` after confirming that `.env` points at that new project database. This creates the access-control schema and permission catalogue. Seeding creates no user and no default password.
-5. Run `./scripts/php.ps1 artisan erp:create-admin owner@example.com --name="Owner"`. Enter and confirm a password at the hidden prompts. Use at least 12 characters with uppercase/lowercase letters and numbers. Passwords are never command-line arguments.
-6. Run `./scripts/php.ps1 artisan serve --host=127.0.0.1 --port=8000 --no-reload`, then visit http://127.0.0.1:8000/login. Restart the server after changing `.env`.
+ثبّت **PHP 8.4+ وComposer وMySQL 8.4+** أولًا، وأضف PHP وComposer إلى PATH
+وشغّل خدمة MySQL. لا يحتاج المشروع Node/npm. بعد تحميل المشروع من GitHub،
+افتح PowerShell داخل مجلده ونفّذ:
 
-The Windows wrapper enables missing PDO MySQL/SQLite extensions for this process and its children using an ignored local INI file. It does not edit global PHP settings. If PHP cannot find the DLLs, configure its `extension_dir` normally. On other platforms enable `pdo_mysql` and `pdo_sqlite`, then use `php` directly.
+```powershell
+.\setup.cmd
+```
+
+الأمر يثبت المكتبات، وينشئ `.env` عند غيابه، ويسألك عن اتصال MySQL. أدخل حساب
+MySQL الموجود على جهازك؛ لا توجد كلمة مرور افتراضية. اختر اسم قاعدة بحروف
+إنجليزية أو أرقام أو `_`، وراجع الهدف قبل الموافقة. ينشئ الأمر القاعدة عند غيابها
+إذا كان حساب MySQL يملك صلاحية CREATE DATABASE؛ وإلا أنشئ قاعدة فارغة بنفسك
+واستخدم حسابًا يملك صلاحيات إنشاء وتعديل جداولها.
+
+بعد ذلك يُولّد مفتاح التطبيق عند غيابه ويُنشئ الجداول والصلاحيات والمستودع الأساسي،
+ثم يطلب اسم المدير وبريده وكلمة مروره وتأكيدها. كلمات المرور مخفية أثناء الإدخال؛
+كلمة مرور المدير 12 حرفًا على الأقل، تشمل حروفًا كبيرة وصغيرة وأرقامًا. كل جهاز
+له إعداداته وحسابه؛ لا ترفع `.env` أو تشارك كلمات المرور.
+
+للتشغيل بعد التجهيز وفي كل مرة لاحقة:
+
+```powershell
+composer dev
+```
+
+افتح [صفحة الدخول](http://127.0.0.1:8000/login). أوقف الخادم بـCtrl+C، وأعد تشغيله
+بعد تغيير `.env`. إذا كان المنفذ 8000 مستخدمًا، أوقف الخادم السابق أولًا.
+
+إعادة `.\setup.cmd` تحفظ مفتاح التطبيق وبيانات النظام وكلمة مرور المدير
+الموجود وتخصيصات المستودع والأدوار، وتطبّق الترحيلات والبيانات الأساسية الجديدة.
+لا تعيد إنشاء الحساب إذا وُجد مدير نظام نشط. الأمر للتطوير المحلي فقط، ويرفض
+قاعدة غير فارغة لا يتعرف عليها كقاعدة Smart Mini ERP. خذ نسخة احتياطية قبل
+تحديث تثبيت يحتوي بيانات مهمة؛ الترحيلات لا تُحاط كلها بمعاملة واحدة في MySQL.
+
+لتغيير الاتصال الذي حفظته، نفّذ بعد تثبيت المكتبات:
+
+```powershell
+php scripts/setup.php install --configure
+```
+
+If a fresh setup fails before credentials are saved, rerun `.\setup.cmd`. After
+settings are saved, use the `--configure` command above to change them. The
+installer supports direct MySQL host/port connections; clear `DB_URL`/`DB_SOCKET`
+overrides. It installs project dependencies, not PHP, Composer or the MySQL service.
+
+On Windows, setup and `composer dev` enable a missing `pdo_mysql` DLL for their
+child PHP processes using an ignored local INI file. Global PHP settings are not
+edited. If the DLL cannot load, point `extension_dir` in your PHP configuration at
+the matching PHP `ext` directory. Composer reports any other missing PHP extensions.
+The existing `scripts/php.ps1` wrapper also enables SQLite for the isolated test
+suite. No PowerShell execution-policy change is needed for `.\setup.cmd` or
+`composer dev`. On other platforms enable `pdo_mysql` normally.
 
 ## الصلاحيات | Access rules
 
@@ -60,6 +104,7 @@ Real MySQL regression checks are separate from the in-memory suite:
 ./scripts/php.ps1 tests/MySql/purchase-concurrency.php
 ./scripts/php.ps1 tests/MySql/sales-concurrency.php
 ./scripts/php.ps1 tests/MySql/workflow-reports.php
+./scripts/php.ps1 tests/MySql/install.php
 ./scripts/php.ps1 artisan erp:check-stock
 ```
 
@@ -69,9 +114,15 @@ connections, verify ownership and references before cleanup, and remove only the
 own fixtures. Generated worker artifacts stay under ignored `.cache/mysql-stock-tests/`
 and `.cache/mysql-purchase-tests/`, `.cache/mysql-sales-tests/`.
 
+The installer check uses separate ignored `.env` files and randomly named temporary
+schemas. It verifies fresh setup, database creation, repeat setup, cancellation,
+bad credentials and refusal of an unrelated nonempty database, then removes only
+its owned schemas. Its MySQL account must have CREATE/DROP DATABASE permission.
+
 The main automated suite forces an isolated SQLite database in memory. A bootstrap guard checks the resolved configuration before database migrations and refuses cached MySQL, file SQLite or URL overrides. If tests stop at this guard, run `./scripts/php.ps1 artisan config:clear` and retry. The suite covers authentication, revoked sessions, access boundaries, privilege escalation, last-administrator protection, role changes, validation, escaped output, CSRF, safe landing pages, stock posting invariants and both languages. The standalone MySQL scripts above deliberately use the configured local database without dropping tables.
 
-Verified locally: 140 automated tests / 893 assertions, including full purchase/receipt/
+Verified locally: 147 automated tests / 924 assertions, including Windows setup/
+literal environment values/bootstrap checks and full purchase/receipt/
 multi-line sale/FEFO/replay/reconciliation, report scope/date/pagination/stock alerts,
 dashboard permission isolation, customer tier/date/
 unit selection, exact conversion and rounding, overlap/version guards, sales snapshots,
