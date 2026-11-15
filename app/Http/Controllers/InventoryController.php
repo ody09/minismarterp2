@@ -10,6 +10,7 @@ use App\Models\Warehouse;
 use App\Services\StockBalances;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class InventoryController extends Controller
@@ -36,9 +37,13 @@ class InventoryController extends Controller
 
     public function transactions(Request $request): View
     {
-        $filters = $request->validate(['q' => ['nullable', 'string', 'max:100'],
-            'product_id' => ['nullable', 'integer', 'exists:products,id'], 'type' => ['nullable', 'in:receipt,issue,reversal'],
-            'from' => ['nullable', 'date_format:Y-m-d'], 'to' => ['nullable', 'date_format:Y-m-d']]);
+        $filters = $request->validate([
+            'q' => ['nullable', 'string', 'max:100'],
+            'product_id' => ['nullable', 'integer', 'exists:products,id'],
+            'type' => ['nullable', 'in:receipt,issue,reversal'],
+            'from' => ['nullable', 'date_format:Y-m-d'],
+            'to' => ['nullable', 'date_format:Y-m-d', Rule::when($request->filled('from'), ['after_or_equal:from'])],
+        ]);
         $query = InventoryTransaction::with(['inventory.batch.product', 'operation.user'])->whereHas('operation.warehouse', fn ($query) => $query->where('code', 'main'))
             ->when(! empty($filters['product_id']), fn ($query) => $query->whereHas('inventory.batch', fn ($query) => $query->where('product_id', $filters['product_id'])))
             ->when(($filters['q'] ?? '') !== '', fn ($query) => $query->whereHas('operation', fn ($query) => $query->where('reference', 'like', '%'.$filters['q'].'%')))

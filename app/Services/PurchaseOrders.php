@@ -7,6 +7,7 @@ use App\Models\ProductBatch;
 use App\Models\PurchaseOrder;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Support\DecimalAmount;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -36,7 +37,7 @@ class PurchaseOrders
             }],
         ])->validate();
         $lines = array_map(fn ($line) => ['product_id' => (int) $line['product_id'], 'quantity' => (int) $line['quantity'],
-            'unit' => $line['unit'], 'unit_price' => $this->decimal($this->micros((string) $line['unit_price']))], array_values($data['items']));
+            'unit' => $line['unit'], 'unit_price' => DecimalAmount::format(DecimalAmount::price((string) $line['unit_price']))], array_values($data['items']));
         $notes = trim($data['notes'] ?? '');
         $normalized = ['supplier_id' => (int) $data['supplier_id'], 'order_date' => $data['order_date'],
             'notes' => $notes === '' ? null : $notes];
@@ -68,7 +69,7 @@ class PurchaseOrders
                 if (! $product?->is_active) {
                     $this->invalid('items.'.$index.'.product_id', 'inactive');
                 }
-                $price = $this->micros($line['unit_price']);
+                $price = DecimalAmount::price($line['unit_price']);
                 if ($price > 0 && $line['quantity'] > intdiv(self::MAX_AMOUNT, $price)) {
                     $this->invalid('items.'.$index.'.unit_price', 'amount');
                 }
@@ -78,10 +79,10 @@ class PurchaseOrders
                 }
                 $total += $subtotal;
                 $line += ['product_name' => $product->name, 'conversion_factor' => $line['unit'] === 'carton' ? $product->pieces_per_carton : 1,
-                    'line_number' => $index + 1, 'subtotal' => $this->decimal($subtotal)];
+                    'line_number' => $index + 1, 'subtotal' => DecimalAmount::format($subtotal)];
             }
             unset($line);
-            $values = [...$normalized, 'supplier_name' => $supplier->name, 'total_amount' => $this->decimal($total)];
+            $values = [...$normalized, 'supplier_name' => $supplier->name, 'total_amount' => DecimalAmount::format($total)];
             if ($order) {
                 $order->fill([...$values, 'version' => $order->version + 1])->save();
                 $order->items()->delete();
@@ -209,18 +210,6 @@ class PurchaseOrders
     private function withItems(PurchaseOrder $order): PurchaseOrder
     {
         return $order->setRelation('items', $order->items()->lockForUpdate()->get());
-    }
-
-    private function micros(string $price): int
-    {
-        [$whole, $fraction] = array_pad(explode('.', $price), 2, '');
-
-        return (int) $whole * 1000000 + (int) str_pad($fraction, 6, '0');
-    }
-
-    private function decimal(int $micros): string
-    {
-        return intdiv($micros, 1000000).'.'.str_pad((string) ($micros % 1000000), 6, '0', STR_PAD_LEFT);
     }
 
     private function hash(array $payload): string

@@ -1,0 +1,2 @@
+Found 6 security vulnerability advisories affecting 3 packages.
+Run "composer audit" for a full list of advisories.

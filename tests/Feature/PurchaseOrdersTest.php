@@ -95,6 +95,31 @@ class PurchaseOrdersTest extends TestCase
         $this->invalid(fn () => app(PurchaseOrders::class)->save($this->actor, [...$data, 'notes' => 'Changed']));
     }
 
+    public function test_idempotent_replay_accepts_equivalent_price_representations_with_same_key(): void
+    {
+        $key = (string) Str::uuid();
+        $data1 = $this->data([
+            'key' => $key,
+            'items' => [
+                ['product_id' => $this->product->id, 'quantity' => 2, 'unit' => 'piece', 'unit_price' => '12.3'],
+            ],
+        ]);
+        $order1 = app(PurchaseOrders::class)->save($this->actor, $data1);
+        $this->assertSame('24.600000', $order1->total_amount);
+        $this->assertSame('12.300000', $order1->items->first()->unit_price);
+
+        // Replay with identical key but equivalent formatted price "12.300000"
+        $data2 = $this->data([
+            'key' => $key,
+            'items' => [
+                ['product_id' => $this->product->id, 'quantity' => 2, 'unit' => 'piece', 'unit_price' => '12.300000'],
+            ],
+        ]);
+        $order2 = app(PurchaseOrders::class)->save($this->actor, $data2);
+        $this->assertSame($order1->id, $order2->id);
+        $this->assertDatabaseCount('purchase_orders', 1);
+    }
+
     public function test_draft_update_rejects_stale_forms_and_cancelled_order_keeps_its_items(): void
     {
         $order = $this->save();

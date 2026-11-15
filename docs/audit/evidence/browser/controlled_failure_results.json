@@ -1,0 +1,811 @@
+{
+  "tag": "AUDIT-1794297904798",
+  "started_at": "2026-11-10T08:05:04.798Z",
+  "controlled_failure_mode": true,
+  "milestones": {
+    "admin_login": {
+      "status": "PASS",
+      "heading": "ملخص الأعمال"
+    },
+    "master_data": {
+      "status": "PASS",
+      "category": "مستلزمات عامة AUDIT-1794297904798",
+      "supplier": "شركة التوريدات المتحدة AUDIT-1794297904798",
+      "customer": "مؤسسة الأمل التجارية AUDIT-1794297904798",
+      "product_alpha": "منتج ألف AUDIT-1794297904798",
+      "product_beta": "منتج باء AUDIT-1794297904798"
+    },
+    "purchasing_rbac_403": "PASS",
+    "dialog_message": "استلام هذا الأمر وإضافة جميع كمياته إلى المخزون؟",
+    "po_lifecycle": {
+      "po_id": "27",
+      "po_total": "80.000000",
+      "status_draft": "مسودة",
+      "status_received": "مستلم",
+      "batches": {
+        "batchA1": "BATCH-A1-AUDIT-1794297904798",
+        "expiryAlpha1": "2027-01-09",
+        "batchA2": "BATCH-A2-AUDIT-1794297904798",
+        "expiryAlpha2": "2027-05-09",
+        "batchB1": "BATCH-B1-AUDIT-1794297904798",
+        "expiryBeta": "2027-02-08"
+      }
+    },
+    "sales_rbac_403": "PASS"
+  },
+  "independent_calculations": {
+    "product_alpha": {
+      "pieces_per_carton": 12,
+      "po_line_1": {
+        "cartons": 1,
+        "pieces": 12,
+        "unit_price": "10.000000",
+        "subtotal": "10.000000",
+        "expiry": "2027-01-09"
+      },
+      "po_line_2": {
+        "cartons": 1,
+        "pieces": 12,
+        "unit_price": "10.000000",
+        "subtotal": "10.000000",
+        "expiry": "2027-05-09"
+      },
+      "po_total_pieces": 24,
+      "po_total_amount": "20.000000",
+      "customer_rule_min_qty": 10,
+      "customer_rule_price": "12.000000",
+      "so_pieces": 15,
+      "so_subtotal_expected": "180.000000",
+      "fefo_allocation": {
+        "batch_1_pieces": 12,
+        "batch_2_pieces": 3
+      },
+      "stock_remaining_expected": {
+        "batch_1_pieces": 0,
+        "batch_2_pieces": 9,
+        "total_physical_pieces": 9,
+        "total_sellable_pieces": 9
+      }
+    },
+    "product_beta": {
+      "pieces_per_carton": 6,
+      "po_line_3": {
+        "cartons": 3,
+        "pieces": 18,
+        "unit_price": "20.000000",
+        "subtotal": "60.000000",
+        "expiry": "2027-02-08"
+      },
+      "po_total_pieces": 18,
+      "po_total_amount": "60.000000",
+      "so_cartons": 1,
+      "so_pieces": 6,
+      "so_subtotal_expected": "168.000000",
+      "fefo_allocation": {
+        "batch_pieces": 6
+      },
+      "stock_remaining_expected": {
+        "batch_pieces": 12,
+        "total_physical_pieces": 12,
+        "total_sellable_pieces": 12
+      }
+    },
+    "totals": {
+      "po_total_amount_expected": "80.000000",
+      "po_total_pieces_expected": 42,
+      "so_total_amount_expected": "999.000000",
+      "so_total_pieces_expected": 21
+    }
+  },
+  "http_checks": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 200,
+      "location": null,
+      "description": "Load login page for admin",
+      "timestamp": "2026-11-10T08:05:05.328Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/dashboard",
+      "description": "Admin login",
+      "timestamp": "2026-11-10T08:05:05.833Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/dashboard",
+      "status": 200,
+      "location": null,
+      "description": "Admin login",
+      "timestamp": "2026-11-10T08:05:06.096Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Admin login",
+      "timestamp": "2026-11-10T08:05:06.105Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Admin login",
+      "timestamp": "2026-11-10T08:05:06.135Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/categories/create",
+      "status": 200,
+      "location": null,
+      "description": "Open Category create form",
+      "timestamp": "2026-11-10T08:05:06.519Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/categories",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/categories",
+      "description": "Save Category",
+      "timestamp": "2026-11-10T08:05:06.776Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/categories",
+      "status": 200,
+      "location": null,
+      "description": "Save Category",
+      "timestamp": "2026-11-10T08:05:06.987Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Save Category",
+      "timestamp": "2026-11-10T08:05:06.998Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Save Category",
+      "timestamp": "2026-11-10T08:05:07.000Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/suppliers/create",
+      "status": 200,
+      "location": null,
+      "description": "Open Supplier create form",
+      "timestamp": "2026-11-10T08:05:07.209Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/suppliers",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/suppliers",
+      "description": "Save Supplier",
+      "timestamp": "2026-11-10T08:05:07.445Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/suppliers",
+      "status": 200,
+      "location": null,
+      "description": "Save Supplier",
+      "timestamp": "2026-11-10T08:05:07.642Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Save Supplier",
+      "timestamp": "2026-11-10T08:05:07.651Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Save Supplier",
+      "timestamp": "2026-11-10T08:05:07.655Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/customers/create",
+      "status": 200,
+      "location": null,
+      "description": "Open Customer create form",
+      "timestamp": "2026-11-10T08:05:07.860Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/customers",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/customers",
+      "description": "Save Customer",
+      "timestamp": "2026-11-10T08:05:08.169Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/customers",
+      "status": 200,
+      "location": null,
+      "description": "Save Customer",
+      "timestamp": "2026-11-10T08:05:08.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Save Customer",
+      "timestamp": "2026-11-10T08:05:08.390Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Save Customer",
+      "timestamp": "2026-11-10T08:05:08.392Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/products/create",
+      "status": 200,
+      "location": null,
+      "description": "Open Product create form for Alpha",
+      "timestamp": "2026-11-10T08:05:08.606Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/products",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/products",
+      "description": "Save Product Alpha",
+      "timestamp": "2026-11-10T08:05:08.881Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/products",
+      "status": 200,
+      "location": null,
+      "description": "Save Product Alpha",
+      "timestamp": "2026-11-10T08:05:09.087Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Save Product Alpha",
+      "timestamp": "2026-11-10T08:05:09.098Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Save Product Alpha",
+      "timestamp": "2026-11-10T08:05:09.099Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/products/create",
+      "status": 200,
+      "location": null,
+      "description": "Open Product create form for Beta",
+      "timestamp": "2026-11-10T08:05:09.307Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/products",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/products",
+      "description": "Save Product Beta",
+      "timestamp": "2026-11-10T08:05:09.565Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/products",
+      "status": 200,
+      "location": null,
+      "description": "Save Product Beta",
+      "timestamp": "2026-11-10T08:05:09.785Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Save Product Beta",
+      "timestamp": "2026-11-10T08:05:09.798Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Save Product Beta",
+      "timestamp": "2026-11-10T08:05:09.798Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/account",
+      "status": 200,
+      "location": null,
+      "description": "Open account page for logout",
+      "timestamp": "2026-11-10T08:05:10.090Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/logout",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/login",
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:10.273Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:10.440Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:10.450Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:10.451Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 200,
+      "location": null,
+      "description": "Load login page for purchasing",
+      "timestamp": "2026-11-10T08:05:10.604Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/account",
+      "description": "Purchasing officer login",
+      "timestamp": "2026-11-10T08:05:11.001Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/account",
+      "status": 200,
+      "location": null,
+      "description": "Purchasing officer login",
+      "timestamp": "2026-11-10T08:05:11.219Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Purchasing officer login",
+      "timestamp": "2026-11-10T08:05:11.229Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Purchasing officer login",
+      "timestamp": "2026-11-10T08:05:11.229Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/sales",
+      "status": 403,
+      "location": null,
+      "description": "Purchasing officer forbidden access test on /sales",
+      "timestamp": "2026-11-10T08:05:11.427Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/purchases/create",
+      "status": 200,
+      "location": null,
+      "description": "Open PO create form",
+      "timestamp": "2026-11-10T08:05:11.654Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/purchases",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/purchases/27",
+      "description": "Save PO draft",
+      "timestamp": "2026-11-10T08:05:12.221Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/purchases/27",
+      "status": 200,
+      "location": null,
+      "description": "Save PO draft",
+      "timestamp": "2026-11-10T08:05:12.420Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Save PO draft",
+      "timestamp": "2026-11-10T08:05:12.430Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Save PO draft",
+      "timestamp": "2026-11-10T08:05:12.432Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/purchases/27/receive",
+      "status": 200,
+      "location": null,
+      "description": "Open PO receive form",
+      "timestamp": "2026-11-10T08:05:12.684Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/purchases/27/receive",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/purchases/27",
+      "description": "Submit PO batches receipt",
+      "timestamp": "2026-11-10T08:05:12.989Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/purchases/27",
+      "status": 200,
+      "location": null,
+      "description": "Submit PO batches receipt",
+      "timestamp": "2026-11-10T08:05:13.187Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Submit PO batches receipt",
+      "timestamp": "2026-11-10T08:05:13.199Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Submit PO batches receipt",
+      "timestamp": "2026-11-10T08:05:13.199Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/account",
+      "status": 200,
+      "location": null,
+      "description": "Open account page for logout",
+      "timestamp": "2026-11-10T08:05:13.478Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/logout",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/login",
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:13.658Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:13.827Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:13.838Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:13.838Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 200,
+      "location": null,
+      "description": "Load login page for admin",
+      "timestamp": "2026-11-10T08:05:14.000Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/dashboard",
+      "description": "Admin login for pricing tier",
+      "timestamp": "2026-11-10T08:05:14.419Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/dashboard",
+      "status": 200,
+      "location": null,
+      "description": "Admin login for pricing tier",
+      "timestamp": "2026-11-10T08:05:14.688Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Admin login for pricing tier",
+      "timestamp": "2026-11-10T08:05:14.697Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Admin login for pricing tier",
+      "timestamp": "2026-11-10T08:05:14.698Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/prices/create",
+      "status": 200,
+      "location": null,
+      "description": "Open Customer Pricing create form",
+      "timestamp": "2026-11-10T08:05:14.918Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/prices",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/prices",
+      "description": "Save customer pricing rule",
+      "timestamp": "2026-11-10T08:05:15.169Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/prices",
+      "status": 200,
+      "location": null,
+      "description": "Save customer pricing rule",
+      "timestamp": "2026-11-10T08:05:15.387Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Save customer pricing rule",
+      "timestamp": "2026-11-10T08:05:15.398Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Save customer pricing rule",
+      "timestamp": "2026-11-10T08:05:15.399Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/account",
+      "status": 200,
+      "location": null,
+      "description": "Open account page for logout",
+      "timestamp": "2026-11-10T08:05:15.700Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/logout",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/login",
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:15.892Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:16.057Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:16.066Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "User logout",
+      "timestamp": "2026-11-10T08:05:16.066Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 200,
+      "location": null,
+      "description": "Load login page for sales",
+      "timestamp": "2026-11-10T08:05:16.223Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/login",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/account",
+      "description": "Sales officer login",
+      "timestamp": "2026-11-10T08:05:16.654Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/account",
+      "status": 200,
+      "location": null,
+      "description": "Sales officer login",
+      "timestamp": "2026-11-10T08:05:16.889Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Sales officer login",
+      "timestamp": "2026-11-10T08:05:16.899Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Sales officer login",
+      "timestamp": "2026-11-10T08:05:16.901Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/purchases",
+      "status": 403,
+      "location": null,
+      "description": "Sales officer forbidden access test on /purchases",
+      "timestamp": "2026-11-10T08:05:17.100Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/sales/create",
+      "status": 200,
+      "location": null,
+      "description": "Open SO create form for future date test",
+      "timestamp": "2026-11-10T08:05:17.327Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/sales",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/sales/create",
+      "description": "Submit SO with future date",
+      "timestamp": "2026-11-10T08:05:17.569Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/sales/create",
+      "status": 200,
+      "location": null,
+      "description": "Submit SO with future date",
+      "timestamp": "2026-11-10T08:05:17.781Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Submit SO with future date",
+      "timestamp": "2026-11-10T08:05:17.795Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/purchase-lines.js",
+      "status": 200,
+      "location": null,
+      "description": "Submit SO with future date",
+      "timestamp": "2026-11-10T08:05:17.797Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Submit SO with future date",
+      "timestamp": "2026-11-10T08:05:17.798Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/sales/create",
+      "status": 200,
+      "location": null,
+      "description": "Open SO create form",
+      "timestamp": "2026-11-10T08:05:18.021Z"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:8000/sales",
+      "status": 302,
+      "location": "http://127.0.0.1:8000/sales/36",
+      "description": "Save SO draft",
+      "timestamp": "2026-11-10T08:05:18.481Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/sales/36",
+      "status": 200,
+      "location": null,
+      "description": "Save SO draft",
+      "timestamp": "2026-11-10T08:05:18.683Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/css/app.css",
+      "status": 200,
+      "location": null,
+      "description": "Save SO draft",
+      "timestamp": "2026-11-10T08:05:18.697Z"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:8000/js/confirm-delete.js",
+      "status": 200,
+      "location": null,
+      "description": "Save SO draft",
+      "timestamp": "2026-11-10T08:05:18.698Z"
+    }
+  ],
+  "errors": [
+    "SO total mismatch: expected 999.000000, got 348.000000\n+ actual - expected\n\n+ '348.000000'\n- '999.000000'\n"
+  ],
+  "finished_at": "2026-11-10T08:05:18.722Z",
+  "status": "FAILED"
+}

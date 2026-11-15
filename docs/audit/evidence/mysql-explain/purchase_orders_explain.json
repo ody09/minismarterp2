@@ -1,0 +1,37 @@
+{
+  "query_block": {
+    "select_id": 1,
+    "cost_info": {
+      "query_cost": "2.30"
+    },
+    "ordering_operation": {
+      "using_filesort": true,
+      "cost_info": {
+        "sort_cost": "1.00"
+      },
+      "table": {
+        "table_name": "purchase_orders",
+        "access_type": "ALL",
+        "possible_keys": [
+          "purchase_orders_status_index"
+        ],
+        "rows_examined_per_scan": 3,
+        "rows_produced_per_join": 1,
+        "filtered": "33.33",
+        "cost_info": {
+          "read_cost": "1.20",
+          "eval_cost": "0.10",
+          "prefix_cost": "1.30",
+          "data_read_per_join": "1K"
+        },
+        "used_columns": [
+          "id",
+          "status",
+          "total_amount",
+          "received_at"
+        ],
+        "attached_condition": "((`smart_mini_erp_test`.`purchase_orders`.`status` = 'received') and (`smart_mini_erp_test`.`purchase_orders`.`received_at` >= TIMESTAMP'2026-11-01 00:00:00') and (`smart_mini_erp_test`.`purchase_orders`.`received_at` < TIMESTAMP'2026-11-30 23:59:59'))"
+      }
+    }
+  }
+}

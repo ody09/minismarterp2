@@ -1,0 +1,6 @@
+﻿{
+    "command":  "composer audit --locked --format=json",
+    "execution_time":  "2026-11-10T09:57:43+03:00",
+    "exit_code":  1,
+    "composer_lock_sha256":  "0147037A2519DA2E35DFAB670A9787C0C3C132C978F86B5F3874662C3850E586"
+}

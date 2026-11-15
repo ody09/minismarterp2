@@ -86,7 +86,7 @@ class BusinessReports
         foreach ($lines->cursor() as $line) {
             $pieces = $pieces->plus(BigInteger::of((string) $line->quantity)->multipliedBy((string) $line->conversion_factor));
         }
-        $rows = (clone $query)->with('user')->withSum('items as total_pieces', DB::raw('quantity * conversion_factor'))
+        $rows = (clone $query)->withSum('items as total_pieces', DB::raw('quantity * conversion_factor'))
             ->orderByDesc($posted)->orderByDesc('id');
         $orders = $overview ? $rows->limit(5)->get() : $rows->paginate(15)->withQueryString();
 

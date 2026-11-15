@@ -1,0 +1,42 @@
+{
+  "query_block": {
+    "select_id": 1,
+    "cost_info": {
+      "query_cost": "1.10"
+    },
+    "ordering_operation": {
+      "using_filesort": true,
+      "table": {
+        "table_name": "sales_orders",
+        "access_type": "ref",
+        "possible_keys": [
+          "sales_orders_status_index"
+        ],
+        "key": "sales_orders_status_index",
+        "used_key_parts": [
+          "status"
+        ],
+        "key_length": "1",
+        "ref": [
+          "const"
+        ],
+        "rows_examined_per_scan": 1,
+        "rows_produced_per_join": 1,
+        "filtered": "100.00",
+        "cost_info": {
+          "read_cost": "1.00",
+          "eval_cost": "0.10",
+          "prefix_cost": "1.10",
+          "data_read_per_join": "1K"
+        },
+        "used_columns": [
+          "id",
+          "status",
+          "total_amount",
+          "confirmed_at"
+        ],
+        "attached_condition": "((`smart_mini_erp_test`.`sales_orders`.`confirmed_at` >= TIMESTAMP'2026-11-01 00:00:00') and (`smart_mini_erp_test`.`sales_orders`.`confirmed_at` < TIMESTAMP'2026-11-30 23:59:59'))"
+      }
+    }
+  }
+}
