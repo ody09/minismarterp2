@@ -10,6 +10,7 @@ return [
     'confirm' => 'Confirm sale', 'review_hint' => 'Review this saved order. Confirmation issues all quantities from the main warehouse, using the earliest valid expiry first. Prices and stock are checked again.',
     'confirm_action' => 'Confirm and issue stock', 'confirmed_notice' => 'Sale confirmed and stock issued.',
     'cancelled_notice' => 'Draft cancelled. Stock was not changed.', 'cancel_order' => 'Cancel draft',
+    'confirm_cancel' => 'Cancel this sales order draft? It will remain in sales history.',
     'confirmed_by' => 'Confirmed by', 'confirmed_at' => 'Confirmed at', 'stock_link' => 'View stock issue',
     'allocations' => 'Batch allocations', 'history' => 'Sales history', 'back' => 'Back to sales',
     'terminal_hint' => 'This document is retained for audit. Editing and draft cancellation are closed.',

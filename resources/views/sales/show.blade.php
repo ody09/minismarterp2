@@ -11,5 +11,5 @@
 @if($allocations)
 <section class="card"><h2>{{ __('sales.allocations') }}</h2><div class="table-wrap"><table><thead><tr><th>{{ __('inventory.line') }}</th><th>{{ __('catalog.batch_number') }}</th><th>{{ __('inventory.quantity') }}</th></tr></thead><tbody>@foreach($allocations as $move)<tr><td><a href="#sale-line-{{ $move->line_number }}">{{ $move->line_number }}</a></td><td>{{ $move->inventory->batch->batch_number }}</td><td dir="ltr">{{ $move->quantity }}</td></tr>@endforeach</tbody></table></div>@include('partials.pagination', ['paginator' => $allocations])</section>
 @endif
-@if($order->status === 'draft')@can('sales.manage')<form method="post" action="{{ route('sales.cancel', $order) }}" data-confirm="{{ __('purchases.confirm_cancel') }}">@csrf<input type="hidden" name="version" value="{{ $order->version }}"><button class="button danger">{{ __('sales.cancel_order') }}</button></form>@endcan @else<p class="muted">{{ __('sales.terminal_hint') }}</p>@endif
+@if($order->status === 'draft')@can('sales.manage')<form method="post" action="{{ route('sales.cancel', $order) }}" data-confirm="{{ __('sales.confirm_cancel') }}">@csrf<input type="hidden" name="version" value="{{ $order->version }}"><button class="button danger">{{ __('sales.cancel_order') }}</button></form>@endcan @else<p class="muted">{{ __('sales.terminal_hint') }}</p>@endif
 @endsection

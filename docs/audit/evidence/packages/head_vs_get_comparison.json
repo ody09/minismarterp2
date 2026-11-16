@@ -1,0 +1,58 @@
+[
+    {
+        "scenario": "Dashboard unauthenticated",
+        "uri": "\/dashboard",
+        "get_status": 302,
+        "head_status": 302,
+        "allow_header": null
+    },
+    {
+        "scenario": "Dashboard admin",
+        "uri": "\/dashboard",
+        "get_status": 200,
+        "head_status": 200,
+        "allow_header": null
+    },
+    {
+        "scenario": "Purchases sales user (forbidden)",
+        "uri": "\/purchases",
+        "get_status": 403,
+        "head_status": 403,
+        "allow_header": null
+    },
+    {
+        "scenario": "Purchases admin (authorized)",
+        "uri": "\/purchases",
+        "get_status": 200,
+        "head_status": 200,
+        "allow_header": null
+    },
+    {
+        "scenario": "Sales cancel unauthenticated (Pure POST)",
+        "uri": "\/sales\/1\/cancel",
+        "get_status": 405,
+        "head_status": 405,
+        "allow_header": "POST"
+    },
+    {
+        "scenario": "Sales cancel admin (Pure POST)",
+        "uri": "\/sales\/1\/cancel",
+        "get_status": 405,
+        "head_status": 405,
+        "allow_header": "POST"
+    },
+    {
+        "scenario": "Sales confirm unauthenticated (GET form + POST action)",
+        "uri": "\/sales\/1\/confirm",
+        "get_status": 302,
+        "head_status": 302,
+        "allow_header": null
+    },
+    {
+        "scenario": "Sales confirm sales user (GET form + POST action)",
+        "uri": "\/sales\/1\/confirm",
+        "get_status": 404,
+        "head_status": 404,
+        "allow_header": null
+    }
+]
