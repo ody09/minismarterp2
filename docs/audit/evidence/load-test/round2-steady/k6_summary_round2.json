@@ -1,0 +1,664 @@
+{
+    "metrics": {
+        "erp_op_po_write_cycle": {
+            "med": 2987,
+            "max": 4003,
+            "p(90)": 3216.4,
+            "p(95)": 3256.1,
+            "avg": 2556.0501474926255,
+            "min": 1412
+        },
+        "erp_op_products_empty": {
+            "p(95)": 466.65862500000003,
+            "avg": 360.2747202020202,
+            "min": 182.2225,
+            "med": 411.1424,
+            "max": 1099.1985,
+            "p(90)": 456.1422
+        },
+        "erp_duration_steady_10vu": {
+            "max": 3436,
+            "p(90)": 1844.4000000000008,
+            "p(95)": 3168.7,
+            "avg": 794.975630496454,
+            "min": 178.34,
+            "med": 461.6948
+        },
+        "erp_critical_failures": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "erp_count_reads": {
+            "count": 4440,
+            "rate": 4.66418557696016
+        },
+        "erp_op_batches": {
+            "med": 442.37975,
+            "max": 1003.8447,
+            "p(90)": 499.18692000000004,
+            "p(95)": 509.354365,
+            "avg": 393.0493198863636,
+            "min": 189.2512
+        },
+        "erp_op_sales": {
+            "max": 592.6166,
+            "p(90)": 468.43147,
+            "p(95)": 478.85771,
+            "avg": 365.18582857142854,
+            "min": 192.2293,
+            "med": 413.8275
+        },
+        "erp_duration_steady_warmup": {
+            "p(90)": 1043.7373400000013,
+            "p(95)": 1375.1499999999999,
+            "avg": 473.9898583333333,
+            "min": 191.3935,
+            "med": 349.182,
+            "max": 1527
+        },
+        "erp_rate_success": {
+            "passes": 5182,
+            "fails": 0,
+            "thresholds": {
+                "rate>0.98": false
+            },
+            "value": 1
+        },
+        "erp_op_products_known": {
+            "max": 958.6621,
+            "p(90)": 464.26758,
+            "p(95)": 474.44966999999997,
+            "avg": 369.8283595402296,
+            "min": 175.9442,
+            "med": 417.9392
+        },
+        "http_req_receiving": {
+            "med": 0.4037,
+            "max": 13.5139,
+            "p(90)": 1.24004,
+            "p(95)": 2.9688150000000015,
+            "avg": 0.6179186414067427,
+            "min": 0
+        },
+        "erp_op_purchases_filter": {
+            "avg": 357.47669825327506,
+            "min": 172.5266,
+            "med": 409.8639,
+            "max": 514.5905,
+            "p(90)": 459.60174,
+            "p(95)": 470.16044
+        },
+        "erp_op_dashboard": {
+            "avg": 586.9762176838811,
+            "min": 215.6304,
+            "med": 530.4542,
+            "max": 1445.4699,
+            "p(90)": 905.4634000000001,
+            "p(95)": 1027.88563
+        },
+        "erp_20vu_dashboard": {
+            "max": 1445.4699,
+            "p(90)": 905.8669,
+            "p(95)": 1036.0106,
+            "avg": 591.8750509328353,
+            "min": 215.6304,
+            "med": 536.0158
+        },
+        "erp_20vu_report_purchases": {
+            "avg": 753.6744572115381,
+            "min": 348.3022,
+            "med": 874.7774,
+            "max": 1012.4579,
+            "p(90)": 979.81043,
+            "p(95)": 991.37869
+        },
+        "erp_duration_steady_5vu": {
+            "min": 175.9442,
+            "med": 446.38599999999997,
+            "max": 3625,
+            "p(90)": 1705.5,
+            "p(95)": 3063.25,
+            "avg": 736.2443671296294
+        },
+        "http_reqs": {
+            "count": 9554,
+            "rate": 10.03640292844085
+        },
+        "erp_op_report_sales": {
+            "p(90)": 970.3487200000001,
+            "p(95)": 983.2575599999999,
+            "avg": 740.9640296296297,
+            "min": 335.1018,
+            "med": 867.965,
+            "max": 1426.4251
+        },
+        "erp_op_sales_filter": {
+            "avg": 375.4503175298804,
+            "min": 188.892,
+            "med": 429.8329,
+            "max": 606.8496,
+            "p(90)": 467.8484,
+            "p(95)": 481.9105
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 9554,
+            "thresholds": {
+                "rate<0.05": false
+            },
+            "value": 0
+        },
+        "erp_20vu_purchases_filter": {
+            "p(90)": 459.38386,
+            "p(95)": 470.83505999999994,
+            "avg": 359.7189839378238,
+            "min": 187.6809,
+            "med": 411.9729,
+            "max": 514.5905
+        },
+        "http_req_waiting": {
+            "p(90)": 563.0680400000001,
+            "p(95)": 908.61443,
+            "avg": 420.27064135440617,
+            "min": 134.4966,
+            "med": 423.88779999999997,
+            "max": 1596.2799
+        },
+        "iteration_duration": {
+            "avg": 2784.6182418636195,
+            "min": 1212.203,
+            "med": 2661.1515,
+            "max": 6645.5141,
+            "p(90)": 4101.751810000002,
+            "p(95)": 4913.202124999999
+        },
+        "erp_op_inventory_tx": {
+            "min": 195.5312,
+            "med": 471.38779999999997,
+            "max": 986.9603,
+            "p(90)": 523.7887000000001,
+            "p(95)": 543.44568,
+            "avg": 415.8541809895831
+        },
+        "erp_20vu_products_empty": {
+            "max": 1099.1985,
+            "p(90)": 456.00685999999996,
+            "p(95)": 468.0964349999999,
+            "avg": 362.41191715116287,
+            "min": 182.2225,
+            "med": 411.37335
+        },
+        "erp_20vu_inventory": {
+            "avg": 368.7289566473989,
+            "min": 181.1223,
+            "med": 411.6318,
+            "max": 593.0421,
+            "p(90)": 468.8233,
+            "p(95)": 476.331
+        },
+        "http_req_sending": {
+            "avg": 0.011473728281348126,
+            "min": 0,
+            "med": 0,
+            "max": 1.5112,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "erp_op_report_purchases": {
+            "avg": 745.7475157446804,
+            "min": 348.3022,
+            "med": 874.7184,
+            "max": 1021.5493,
+            "p(90)": 978.66764,
+            "p(95)": 990.87868
+        },
+        "data_received": {
+            "rate": 111709.515732434,
+            "count": 106340162
+        },
+        "vus": {
+            "value": 1,
+            "min": 1,
+            "max": 20
+        },
+        "erp_20vu_so_write_cycle": {
+            "min": 1432,
+            "med": 3023,
+            "max": 4058,
+            "p(90)": 3231.4,
+            "p(95)": 3274.4,
+            "avg": 2616.729641693811
+        },
+        "erp_op_report_inventory": {
+            "avg": 831.0586741333334,
+            "min": 355.696,
+            "med": 975.9958,
+            "max": 1596.2799,
+            "p(90)": 1101.9024399999998,
+            "p(95)": 1116.57045
+        },
+        "http_req_connecting": {
+            "p(95)": 0,
+            "avg": 0.001045792338287628,
+            "min": 0,
+            "med": 0,
+            "max": 1.1225,
+            "p(90)": 0
+        },
+        "http_req_blocked": {
+            "p(95)": 0,
+            "avg": 0.003890046054008793,
+            "min": 0,
+            "med": 0,
+            "max": 1.5192,
+            "p(90)": 0
+        },
+        "erp_duration_steady_20vu": {
+            "avg": 787.0272227515707,
+            "min": 181.1223,
+            "med": 462.1043,
+            "max": 4058,
+            "p(90)": 1990.8000000000002,
+            "p(95)": 3104.699999999999
+        },
+        "erp_op_purchases": {
+            "avg": 365.1731274261602,
+            "min": 182.2106,
+            "med": 416.039,
+            "max": 592.3261,
+            "p(90)": 464.8372,
+            "p(95)": 482.2867
+        },
+        "iterations": {
+            "count": 5162,
+            "rate": 5.422640979339718
+        },
+        "erp_20vu_purchases": {
+            "p(90)": 467.46992000000006,
+            "p(95)": 482.3375,
+            "avg": 367.63754084507036,
+            "min": 191.4851,
+            "med": 418.4125,
+            "max": 592.3261
+        },
+        "erp_20vu_sales": {
+            "avg": 366.1598408163266,
+            "min": 194.7353,
+            "med": 412.07105,
+            "max": 556.4276,
+            "p(90)": 470.24,
+            "p(95)": 478.47535000000005
+        },
+        "data_sent": {
+            "count": 8447878,
+            "rate": 8874.43034313492
+        },
+        "erp_20vu_batches": {
+            "min": 197.5939,
+            "med": 440.5221,
+            "max": 1003.8447,
+            "p(90)": 500.93449,
+            "p(95)": 509.43653500000005,
+            "avg": 397.23396413793114
+        },
+        "erp_20vu_report_inventory": {
+            "p(90)": 1109.94176,
+            "p(95)": 1120.4703599999998,
+            "avg": 859.421395145631,
+            "min": 393.7987,
+            "med": 1006.4177,
+            "max": 1596.2799
+        },
+        "erp_duration_overall": {
+            "avg": 774.3324815769105,
+            "min": 172.5266,
+            "med": 459.5811,
+            "max": 4058,
+            "p(90)": 1960.9000000000005,
+            "p(95)": 3106
+        },
+        "erp_op_inventory": {
+            "max": 593.0421,
+            "p(90)": 468.84266,
+            "p(95)": 476.979725,
+            "avg": 366.1868769417479,
+            "min": 178.34,
+            "med": 411.6318
+        },
+        "http_req_duration{expected_response:true}": {
+            "min": 134.8475,
+            "med": 424.25559999999996,
+            "max": 1596.2799,
+            "p(90)": 563.1142500000001,
+            "p(95)": 908.9708700000003,
+            "avg": 420.9000337240961
+        },
+        "erp_count_writes": {
+            "count": 722,
+            "rate": 0.7584554023795577
+        },
+        "erp_20vu_sales_filter": {
+            "avg": 377.5935233502538,
+            "min": 188.892,
+            "med": 429.661,
+            "max": 606.8496,
+            "p(90)": 468.12640000000005,
+            "p(95)": 483.26092
+        },
+        "vus_max": {
+            "value": 20,
+            "min": 20,
+            "max": 20
+        },
+        "erp_20vu_products_known": {
+            "med": 416.3582,
+            "max": 958.6621,
+            "p(90)": 466.20957,
+            "p(95)": 479.5936499999999,
+            "avg": 371.7691552197799,
+            "min": 189.4027
+        },
+        "http_req_tls_handshaking": {
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0
+        },
+        "checks": {
+            "fails": 0,
+            "passes": 11086,
+            "value": 1
+        },
+        "erp_op_so_write_cycle": {
+            "min": 1262,
+            "med": 3019,
+            "max": 4058,
+            "p(90)": 3230.8,
+            "p(95)": 3272.2,
+            "avg": 2562.5221932114882
+        },
+        "erp_20vu_report_sales": {
+            "p(95)": 984.98335,
+            "avg": 757.5378402061859,
+            "min": 369.1322,
+            "med": 874.2933499999999,
+            "max": 1426.4251,
+            "p(90)": 974.19502
+        },
+        "erp_20vu_po_write_cycle": {
+            "p(95)": 3249,
+            "avg": 2563.5348837209303,
+            "min": 1449,
+            "med": 2983,
+            "max": 4003,
+            "p(90)": 3214
+        },
+        "http_req_duration": {
+            "avg": 420.9000337240961,
+            "min": 134.8475,
+            "med": 424.25559999999996,
+            "max": 1596.2799,
+            "p(90)": 563.1142500000001,
+            "p(95)": 908.9708700000003
+        },
+        "erp_20vu_inventory_tx": {
+            "p(90)": 523.7609,
+            "p(95)": 537.2458,
+            "avg": 421.0744898360655,
+            "min": 198.475,
+            "med": 473.4378,
+            "max": 986.9603
+        }
+    },
+    "root_group": {
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "login status ok": {
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "login status ok",
+                    "path": "::login status ok",
+                    "id": "045eec290a1c6a05967e2fc7254157ad"
+                },
+                "login session cookie set": {
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "login session cookie set",
+                    "path": "::login session cookie set",
+                    "id": "3df991d34bccdf4a991e895c454e3458"
+                },
+                "purchases filter 200": {
+                    "name": "purchases filter 200",
+                    "path": "::purchases filter 200",
+                    "id": "65e0a5c02089e62a9ad1aea7566c984d",
+                    "passes": 229,
+                    "fails": 0
+                },
+                "purchases filter content": {
+                    "name": "purchases filter content",
+                    "path": "::purchases filter content",
+                    "id": "cf6980477bacdc310c4d27b92afe76ec",
+                    "passes": 229,
+                    "fails": 0
+                },
+                "report sales 200": {
+                    "name": "report sales 200",
+                    "path": "::report sales 200",
+                    "id": "50ffae729d0f19f666f73ef9dbc9f75b",
+                    "passes": 243,
+                    "fails": 0
+                },
+                "report sales content": {
+                    "name": "report sales content",
+                    "path": "::report sales content",
+                    "id": "31efa3b9050ebf1aed8ad14a83698ee3",
+                    "passes": 243,
+                    "fails": 0
+                },
+                "report inventory 200": {
+                    "id": "1c26a6448a37608acc79de3a5d41be29",
+                    "passes": 375,
+                    "fails": 0,
+                    "name": "report inventory 200",
+                    "path": "::report inventory 200"
+                },
+                "report inventory content": {
+                    "name": "report inventory content",
+                    "path": "::report inventory content",
+                    "id": "2fd64110de1bde207509e283bdf34a20",
+                    "passes": 375,
+                    "fails": 0
+                },
+                "inventory tx 200": {
+                    "name": "inventory tx 200",
+                    "path": "::inventory tx 200",
+                    "id": "147b876d1871770b59781c8dc47b1e37",
+                    "passes": 384,
+                    "fails": 0
+                },
+                "inventory tx content": {
+                    "name": "inventory tx content",
+                    "path": "::inventory tx content",
+                    "id": "c387cb91c048d5663505bb9e5fc6903e",
+                    "passes": 384,
+                    "fails": 0
+                },
+                "dashboard 200": {
+                    "name": "dashboard 200",
+                    "path": "::dashboard 200",
+                    "id": "834732e3e331ab0c1efa32a058e51217",
+                    "passes": 639,
+                    "fails": 0
+                },
+                "dashboard content verified": {
+                    "path": "::dashboard content verified",
+                    "id": "5ddd68a44f8645f394fac7ab2ee99903",
+                    "passes": 639,
+                    "fails": 0,
+                    "name": "dashboard content verified"
+                },
+                "sales 200": {
+                    "name": "sales 200",
+                    "path": "::sales 200",
+                    "id": "cf0fcd1305a691a40c2781c580f47b9b",
+                    "passes": 252,
+                    "fails": 0
+                },
+                "sales content": {
+                    "path": "::sales content",
+                    "id": "1a7571e34a6c1a802c1216dc012858dc",
+                    "passes": 252,
+                    "fails": 0,
+                    "name": "sales content"
+                },
+                "inventory 200": {
+                    "name": "inventory 200",
+                    "path": "::inventory 200",
+                    "id": "c30a897dbbdca55d013ed7274e2bbebb",
+                    "passes": 412,
+                    "fails": 0
+                },
+                "inventory content": {
+                    "id": "6c8d8ac5e7c2c5e776f4cc15a94629ad",
+                    "passes": 412,
+                    "fails": 0,
+                    "name": "inventory content",
+                    "path": "::inventory content"
+                },
+                "sales filter 200": {
+                    "path": "::sales filter 200",
+                    "id": "39b480e2d377e212e8031a519a2af560",
+                    "passes": 251,
+                    "fails": 0,
+                    "name": "sales filter 200"
+                },
+                "sales filter content": {
+                    "name": "sales filter content",
+                    "path": "::sales filter content",
+                    "id": "5e76f0a700f867a5cf826838537bcc31",
+                    "passes": 251,
+                    "fails": 0
+                },
+                "batches 200": {
+                    "passes": 352,
+                    "fails": 0,
+                    "name": "batches 200",
+                    "path": "::batches 200",
+                    "id": "fd9501891bc5e5ef3480fecfea1746d3"
+                },
+                "batches content": {
+                    "name": "batches content",
+                    "path": "::batches content",
+                    "id": "e34761cf6e1f7454b79a242b63498d9d",
+                    "passes": 352,
+                    "fails": 0
+                },
+                "PO final show page 200": {
+                    "name": "PO final show page 200",
+                    "path": "::PO final show page 200",
+                    "id": "e0ab158b0d6ad0db846187d2d41cf928",
+                    "passes": 339,
+                    "fails": 0
+                },
+                "PO status is received": {
+                    "fails": 0,
+                    "name": "PO status is received",
+                    "path": "::PO status is received",
+                    "id": "dfc84153fe19af4adc84e1d0a33d3f23",
+                    "passes": 339
+                },
+                "PO has batch details": {
+                    "name": "PO has batch details",
+                    "path": "::PO has batch details",
+                    "id": "cbfb2a8c576e37fa99bcab95a682804e",
+                    "passes": 339,
+                    "fails": 0
+                },
+                "report purchases 200": {
+                    "name": "report purchases 200",
+                    "path": "::report purchases 200",
+                    "id": "38fc66d267b0643973beed2aff760a61",
+                    "passes": 235,
+                    "fails": 0
+                },
+                "report purchases content": {
+                    "name": "report purchases content",
+                    "path": "::report purchases content",
+                    "id": "19a4ba6fb4ac3019475c32c5ddcc4dd4",
+                    "passes": 235,
+                    "fails": 0
+                },
+                "products known 200": {
+                    "passes": 435,
+                    "fails": 0,
+                    "name": "products known 200",
+                    "path": "::products known 200",
+                    "id": "fe2afea7c024caedc1d9654e723cb302"
+                },
+                "products known match": {
+                    "path": "::products known match",
+                    "id": "1bc64ec383a1476f916c65109df4020d",
+                    "passes": 435,
+                    "fails": 0,
+                    "name": "products known match"
+                },
+                "SO final show page 200": {
+                    "name": "SO final show page 200",
+                    "path": "::SO final show page 200",
+                    "id": "777e496727bcde9c7a635c8881461339",
+                    "passes": 383,
+                    "fails": 0
+                },
+                "SO status is confirmed": {
+                    "name": "SO status is confirmed",
+                    "path": "::SO status is confirmed",
+                    "id": "863dd2b32e58ab8292d3b7ae24a25a91",
+                    "passes": 383,
+                    "fails": 0
+                },
+                "SO has stock operation link": {
+                    "path": "::SO has stock operation link",
+                    "id": "15d0c3353d54c853cd068aa51d7d4965",
+                    "passes": 383,
+                    "fails": 0,
+                    "name": "SO has stock operation link"
+                },
+                "products empty 200": {
+                    "passes": 396,
+                    "fails": 0,
+                    "name": "products empty 200",
+                    "path": "::products empty 200",
+                    "id": "e3a148a572f47162de7563192f63de33"
+                },
+                "products empty handled": {
+                    "name": "products empty handled",
+                    "path": "::products empty handled",
+                    "id": "e385e563fdc495c45f666057d41d05bb",
+                    "passes": 396,
+                    "fails": 0
+                },
+                "purchases 200": {
+                    "id": "78380afdfbea148906e79c63753f6931",
+                    "passes": 237,
+                    "fails": 0,
+                    "name": "purchases 200",
+                    "path": "::purchases 200"
+                },
+                "purchases content": {
+                    "name": "purchases content",
+                    "path": "::purchases content",
+                    "id": "7fca5d45a26642887aa08e02525cdb54",
+                    "passes": 237,
+                    "fails": 0
+                }
+            },
+        "name": ""
+    }
+}

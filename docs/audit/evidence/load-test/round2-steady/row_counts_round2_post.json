@@ -1,0 +1,19 @@
+{
+    "users": 20,
+    "roles": 4,
+    "permissions": 31,
+    "role_permissions": 57,
+    "warehouses": 1,
+    "categories": 20,
+    "suppliers": 50,
+    "customers": 100,
+    "products": 200,
+    "product_batches": 6339,
+    "inventory": 6339,
+    "stock_operations": 6722,
+    "inventory_transactions": 13065,
+    "purchase_orders": 5339,
+    "purchase_order_items": 10339,
+    "sales_orders": 5383,
+    "sales_order_items": 10383
+}

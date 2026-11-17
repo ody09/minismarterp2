@@ -1,0 +1,14 @@
+{
+    "timestamp": "2026-11-17 10:32:32",
+    "metrics": {
+        "Innodb_row_lock_waits": "119",
+        "Innodb_row_lock_time": "3059",
+        "Innodb_row_lock_time_avg": "25",
+        "Innodb_row_lock_time_max": "77",
+        "Innodb_deadlocks": null,
+        "Threads_running": "2",
+        "Threads_connected": "1",
+        "Queries": "547409",
+        "Uptime": "1655"
+    }
+}
