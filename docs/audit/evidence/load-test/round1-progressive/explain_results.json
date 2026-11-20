@@ -1,0 +1,94 @@
+{
+    "Sales Report Header Filter": [
+        {
+            "id": 1,
+            "select_type": "SIMPLE",
+            "table": "sales_orders",
+            "partitions": null,
+            "type": "ref",
+            "possible_keys": "sales_orders_status_index",
+            "key": "sales_orders_status_index",
+            "key_len": "1",
+            "ref": "const",
+            "rows": 3171,
+            "filtered": 11.108888626098633,
+            "Extra": "Using where"
+        }
+    ],
+    "Sales Report Pieces Join": [
+        {
+            "id": 1,
+            "select_type": "SIMPLE",
+            "table": "sales_orders",
+            "partitions": null,
+            "type": "ref",
+            "possible_keys": "PRIMARY,sales_orders_status_index",
+            "key": "sales_orders_status_index",
+            "key_len": "1",
+            "ref": "const",
+            "rows": 3171,
+            "filtered": 11.108888626098633,
+            "Extra": "Using where"
+        },
+        {
+            "id": 1,
+            "select_type": "SIMPLE",
+            "table": "sales_order_items",
+            "partitions": null,
+            "type": "ref",
+            "possible_keys": "sales_order_items_sales_order_id_line_number_unique,sale_product_unit_unique",
+            "key": "sales_order_items_sales_order_id_line_number_unique",
+            "key_len": "8",
+            "ref": "smart_mini_erp_perf.sales_orders.id",
+            "rows": 1,
+            "filtered": 100,
+            "Extra": null
+        }
+    ],
+    "Purchase Report Header Filter": [
+        {
+            "id": 1,
+            "select_type": "SIMPLE",
+            "table": "purchase_orders",
+            "partitions": null,
+            "type": "ref",
+            "possible_keys": "purchase_orders_status_index",
+            "key": "purchase_orders_status_index",
+            "key_len": "1",
+            "ref": "const",
+            "rows": 3540,
+            "filtered": 11.108888626098633,
+            "Extra": "Using where"
+        }
+    ],
+    "Inventory Report Query": [
+        {
+            "id": 1,
+            "select_type": "SIMPLE",
+            "table": "inventory",
+            "partitions": null,
+            "type": "ALL",
+            "possible_keys": "inventory_batch_id_foreign",
+            "key": null,
+            "key_len": null,
+            "ref": null,
+            "rows": 6412,
+            "filtered": 33.32999801635742,
+            "Extra": "Using where"
+        },
+        {
+            "id": 1,
+            "select_type": "SIMPLE",
+            "table": "product_batches",
+            "partitions": null,
+            "type": "eq_ref",
+            "possible_keys": "PRIMARY",
+            "key": "PRIMARY",
+            "key_len": "8",
+            "ref": "smart_mini_erp_perf.inventory.batch_id",
+            "rows": 1,
+            "filtered": 100,
+            "Extra": null
+        }
+    ]
+}

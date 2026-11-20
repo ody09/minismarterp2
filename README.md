@@ -2,92 +2,114 @@
 
 Laravel 13 / PHP 8.4+ / MySQL 8.4 / Blade.
 
-## المرحلة الحالية | Current phase
+## المرحلة الحالية وحالة المشروع | Current phase and project status
 
-اكتملت المرحلة السادسة: لوحة ملخص الأعمال وتقارير المبيعات والمشتريات وتنبيهات المخزون الحالي، مع اختبار دورة الشراء والاستلام والبيع والصرف كاملة. تشمل المراحل السابقة أسعار العملاء وأوامر البيع والمشتريات والمستخدمين والصلاحيات والبيانات الأساسية. الواجهة عربية وإنجليزية مع RTL/LTR. تسويات الجرد والرصيد الافتتاحي اليدوي مؤجلان.
+اكتملت المرحلة السادسة بنجاح: لوحة ملخص الأعمال وتقارير المبيعات والمشتريات وتنبيهات المخزون الحالي، مع التحقق الكامل من دورة الشراء والاستلام والبيع والصرف. كما تم اعتماد وتطبيق إصلاحات التدقيق البرمجي (معالجة استعلامات N+1 في القائمة عبر `NavigationComposer`، وتصحيح التحقق من التواريخ، ومفاتيح الترجمة، وترقية تبعيات Symfony) وحفظها في الفرع `codex/audit-fixes`. وأُجري بنجاح اختبار أداء مستقر لـ 20 مستخدماً متزامناً موثقاً في `docs/audit/evidence/load-test/round2-steady/`.
 
-Phase6 adds a permission-scoped business dashboard and read-only sales, purchase
-and stock-alert reports, exact aggregate money, local posting-day filters and full
-workflow verification. Phase5 provides versioned customer prices, automatic sales pricing, editable/cancellable
-sales drafts and full confirmation through a typed, atomic FEFO stock issue. Purchase
-drafts/receipts, master data and stock audit screens remain available. Money uses six
-decimal places and checked integers. Stock uses integer pieces and immutable unit
-snapshots. Concurrent/repeated confirmation or receipt submissions post once. No
-manual opening/count adjustment, generic reversal UI or AI dependency is exposed.
+### المهام المتبقية والمؤجلة | Remaining and deferred tasks
+- **تسويات الجرد والرصيد الافتتاحي:** مؤجلة صراحة بقرار المالك لتبقى حركة المخزون دفتر أستاذ غير قابل للتعديل اليدوي.
+- **الوظائف التجارية الموسعة:** مردودات المبيعات والمشتريات، والفواتير الضريبية، وحسابات الدفع والقبض، والتسليم الجزئي تندرج ضمن مراحل وظيفية لاحقة.
+- **مرحلة الذكاء الاصطناعي (AI Phase):** **لم تبدأ بعد**. لم يُدرج أي نموذج أو ارتباط ذكاء اصطناعي في الكود حتى الآن. تتطلب هذه المرحلة تحديداً مسبقاً من أصحاب المصلحة لهدف النموذج (مثل التنبؤ بالطلب أو التجديد الآلي أو كشف الشذوذ)، وتحديد مصادر البيانات وهيكلتها، وصياغة معايير تقييم ومقاييس دقة واضحة قبل البدء في أي تدريب أو ربط برمجي.
 
-## التشغيل على Windows | Windows setup
+Phase 6 is completed: permission-scoped business dashboard, read-only sales, purchase and stock-alert reports, exact aggregate money, local posting-day filters, and full workflow verification. Audited validation, navigation N+1 queries, and Symfony dependencies are resolved on `codex/audit-fixes`. A 20-VU steady-state load benchmark was validated locally.
+- **Deferred Core Items:** Manual opening balances and inventory count adjustments remain explicitly deferred.
+- **Future Commercial Scope:** Sales/purchase returns, tax invoices, payments/receipts, and partial fulfillments belong to future functional phases.
+- **AI Phase Status:** **Not started**. No AI models or dependencies exist in the codebase. Stakeholders must formally define the model objective (e.g. demand forecasting, auto-replenishment, anomaly detection), training/inference data sources, and measurable evaluation benchmarks before implementation begins.
 
-ثبّت **PHP 8.4+ وComposer وMySQL 8.4+** أولًا، وأضف PHP وComposer إلى PATH
-وشغّل خدمة MySQL. لا يحتاج المشروع Node/npm. بعد تحميل المشروع من GitHub،
-افتح PowerShell داخل مجلده ونفّذ:
+---
+
+## التشغيل اليومي وإعداد البيئة | Daily operation and setup
+
+### 1. التشغيل بضغطة واحدة | One-click daily launcher (`start-erp.cmd`)
+
+للتشغيل اليومي السريع والمباشر على بيئة Windows دون الحاجة لكتابة أوامر في الطرفية، يتوفر ملف الدفعة:
+**[`start-erp.cmd`](file:///c:/Users/albna/Documents/minismarterp2/start-erp.cmd)**
+
+#### آلية العمل | What it does
+عند النقر المزدوج على `start-erp.cmd`:
+1. **تشغيل MySQL المحلي (منفذ 3306):** يفحص المنفذ 3306؛ إذا كان يعمل يعيد استخدامه فوراً، وإن كان متوقفاً يشغل محرك MySQL 8.4 المحمول بنوافذ خلفية مخفية.
+2. **فحص وتجهيز الاتصال اليومي:** ينتظر جاهزية محرك قاعدة البيانات، ويتحقق من وجود قاعدة `smart_mini_erp` ومستخدم `smarterp`. إذا لم تكن مهيأة، يقوم بتهيئتها وتطبيق الترحيلات والبيانات الأساسية تلقائياً دون لمس الحسابات أو كلمات المرور أو `APP_KEY`.
+3. **تشغيل Laravel (منفذ 8000):** يفحص المنفذ 8000؛ إذا كان خادم التطوير يعمل يعيد استخدامه، وإن كان متوقفاً يشغله بنوافذ خلفية مخفية عبر إعداد PHP المعتمد مع تحميل الامتداد `pdo_mysql`.
+4. **التحقق من الجاهزية وفتح المتصفح:** ينتظر استجابة صفحة `/login` برمز `HTTP 200`، ثم يفتح المتصفح الافتراضي تلقائياً على الرابط: `http://127.0.0.1:8000/login`.
+
+#### المتطلبات ومسارات البيانات الفعلية | Prerequisites and actual data paths
+- **متطلبات التشغيل:** نظام Windows 64-bit، وPHP 8.4+ مضاف إلى مسار النظام (PATH)، ومكتبات Composer، وتوفر محرك MySQL 8.4 المحمول داخل مجلد المشروع: `.cache/mysql-8.4.13-winx64/bin/mysqld.exe`.
+- **مسار بيانات MySQL الفعلي:** تُحفظ كافة بيانات التشغيل اليومي داخل المجلد المعزول وغير المتتبع في Git:
+  `C:\Users\albna\Documents\minismarterp2\.cache\mysql-daily-data`
+  وملف الإعداد المرتبط به:
+  `C:\Users\albna\Documents\minismarterp2\.cache\my-daily.ini`
+- **الفصل التام عن بيئات الاختبار:** بيئة التشغيل اليومي (منفذ 3306، قاعدة `smart_mini_erp`، مجلد `.cache/mysql-daily-data`) معزولة بالكامل ومستقلة عن قواعد الاختبار على منفذ 3307 (`smart_mini_erp_test` في `.cache/mysql-data` وقاعدة اختبار الحمل `smart_mini_erp_perf` في `.cache/mysql-perf-data`). لا تُستخدم قواعد الاختبار 3307 في التشغيل اليومي إطلاقاً.
+
+#### إيقاف الخدمات | Stopping services
+لإيقاف الخدمات الخلفية (MySQL على 3306 وLaravel على 8000) بشكل آمن:
+- انقر نقراً مزدوجاً على مشغل الإيقاف: **[`stop-erp.cmd`](file:///c:/Users/albna/Documents/minismarterp2/stop-erp.cmd)**
+- أو نفّذ الأمر يدوياً في PowerShell:
+  ```powershell
+  Stop-Process -Name mysqld, php -Force -ErrorAction SilentlyContinue
+  ```
+- أو عبر موجه أوامر Windows (CMD):
+  ```cmd
+  taskkill /F /IM mysqld.exe /IM php.exe
+  ```
+
+#### النسخ الاحتياطي | Backup procedure
+لحفظ نسخة احتياطية من قاعدة بيانات التشغيل اليومي:
+1. **طريقة تفريغ SQL (أثناء عمل الخادم):**
+   ```cmd
+   .cache\mysql-8.4.13-winx64\bin\mysqldump.exe -h127.0.0.1 -P3306 -usmarterp smart_mini_erp > backup_smart_mini_erp.sql
+   ```
+2. **النسخ الاحتياطي الفيزيائي للمجلد (يشترط إيقاف MySQL بشكل سليم أولاً):**
+   > [!WARNING]
+   > يُحظر نسخ مجلد البيانات `.cache/mysql-daily-data` أثناء تشغيل خادم MySQL؛ حيث يؤدي النسخ الساخن غير المتزامن إلى تلف قاعدة البيانات وعدم اتساق ملفات InnoDB Redo Log ومخازن التراجع. **يشترط إيقاف خدمات MySQL بشكل سليم وكامل أولاً** عبر تشغيل [`stop-erp.cmd`](file:///c:/Users/albna/Documents/minismarterp2/stop-erp.cmd) والتحقق من إغلاق العمليات قبل أخذ النسخة الفيزيائية.
+
+#### معالجة تعذر الاتصال والأخطاء | Troubleshooting connection issues
+- **المنفذ 3306 أو 8000 مشغول:** إذا كان هناك برنامج آخر يستخدم المنفذ، سيعرض السكربت رسالة خطأ صريحة. أوقف التطبيق المتعارض أو حرر المنفذ عبر إنهاء العملية المالكة له.
+- **غياب امتداد `pdo_mysql`:** يقوم ملف `scripts/php.ps1` و`scripts/setup.php` بتوليد ملف ضبط محلي تلقائياً (`extensions.ini`) لتحميل الامتداد دون تعديل PHP العام. تأكد من وجود مجلد `ext` بجانب `php.exe`.
+- **سلوك المشغل عند الفشل:** إذا فشل تشغيل MySQL أو تعذر اتصال قاعدة البيانات أو فشل Laravel، يُظهر السكربت سبب الفشل باللون الأحمر ويتوقف دون فتح المتصفح على صفحة خطأ.
+- **ملاحظة التحقق الفعلي:** استجابة صفحة `/login` برمز 200 وحدها لا تثبت اتصال قاعدة البيانات؛ يتحقق سكربت التشغيل من استعلام قاعدة البيانات الفعلي وصحة الاتصال قبل إقرار الجاهزية.
+
+---
+
+### 2. التجهيز والتشغيل اليدوي للمطورين | Manual setup for developers
+
+إذا كنت تفضل الإعداد والتشغيل اليدوي من سطر الأوامر:
+ثبّت **PHP 8.4+ وComposer وMySQL 8.4+** أولًا، وأضف PHP وComposer إلى PATH وشغّل خدمة MySQL. بعد تنزيل المستودع، نفّذ داخل PowerShell:
 
 ```powershell
 .\setup.cmd
 ```
 
-الأمر يثبت المكتبات، وينشئ `.env` عند غيابه، ويسألك عن اتصال MySQL. أدخل حساب
-MySQL الموجود على جهازك؛ لا توجد كلمة مرور افتراضية. اختر اسم قاعدة بحروف
-إنجليزية أو أرقام أو `_`، وراجع الهدف قبل الموافقة. ينشئ الأمر القاعدة عند غيابها
-إذا كان حساب MySQL يملك صلاحية CREATE DATABASE؛ وإلا أنشئ قاعدة فارغة بنفسك
-واستخدم حسابًا يملك صلاحيات إنشاء وتعديل جداولها.
+الأمر يثبت المكتبات، وينشئ `.env` عند غيابه، ويسألك عن اتصال MySQL. أدخل حساب MySQL؛ لا توجد كلمة مرور افتراضية. ينشئ الأمر القاعدة عند غيابها إذا كان الحساب يملك صلاحية `CREATE DATABASE`.
 
-بعد ذلك يُولّد مفتاح التطبيق عند غيابه ويُنشئ الجداول والصلاحيات والمستودع الأساسي،
-ثم يطلب اسم المدير وبريده وكلمة مروره وتأكيدها. كلمات المرور مخفية أثناء الإدخال؛
-كلمة مرور المدير 12 حرفًا على الأقل، تشمل حروفًا كبيرة وصغيرة وأرقامًا. كل جهاز
-له إعداداته وحسابه؛ لا ترفع `.env` أو تشارك كلمات المرور.
+بعد ذلك يُولّد مفتاح التطبيق `APP_KEY` عند غيابه ويُنشئ الجداول والصلاحيات والمستودع الأساسي، ثم يطلب اسم المدير وبريده وكلمة مروره (12 حرفاً على الأقل تشمل أرقاماً وحروفاً كبيرة وصغيرة). كلمات المرور مخفية ولا تُحفظ في ملفات نصية مكشوفة.
 
-للتشغيل بعد التجهيز وفي كل مرة لاحقة:
-
+للتشغيل اليدوي بعد التجهيز:
 ```powershell
 composer dev
 ```
+افتح [صفحة الدخول](http://127.0.0.1:8000/login). أوقف الخادم بـ Ctrl+C.
 
-افتح [صفحة الدخول](http://127.0.0.1:8000/login). أوقف الخادم بـCtrl+C، وأعد تشغيله
-بعد تغيير `.env`. إذا كان المنفذ 8000 مستخدمًا، أوقف الخادم السابق أولًا.
-
-إعادة `.\setup.cmd` تحفظ مفتاح التطبيق وبيانات النظام وكلمة مرور المدير
-الموجود وتخصيصات المستودع والأدوار، وتطبّق الترحيلات والبيانات الأساسية الجديدة.
-لا تعيد إنشاء الحساب إذا وُجد مدير نظام نشط. الأمر للتطوير المحلي فقط، ويرفض
-قاعدة غير فارغة لا يتعرف عليها كقاعدة Smart Mini ERP. خذ نسخة احتياطية قبل
-تحديث تثبيت يحتوي بيانات مهمة؛ الترحيلات لا تُحاط كلها بمعاملة واحدة في MySQL.
-
-لتغيير الاتصال الذي حفظته، نفّذ بعد تثبيت المكتبات:
-
+لتعديل الاتصال المحفوظ:
 ```powershell
 php scripts/setup.php install --configure
 ```
 
-If a fresh setup fails before credentials are saved, rerun `.\setup.cmd`. After
-settings are saved, use the `--configure` command above to change them. The
-installer supports direct MySQL host/port connections; clear `DB_URL`/`DB_SOCKET`
-overrides. It installs project dependencies, not PHP, Composer or the MySQL service.
-
-On Windows, setup and `composer dev` enable a missing `pdo_mysql` DLL for their
-child PHP processes using an ignored local INI file. Global PHP settings are not
-edited. If the DLL cannot load, point `extension_dir` in your PHP configuration at
-the matching PHP `ext` directory. Composer reports any other missing PHP extensions.
-The existing `scripts/php.ps1` wrapper also enables SQLite for the isolated test
-suite. No PowerShell execution-policy change is needed for `.\setup.cmd` or
-`composer dev`. On other platforms enable `pdo_mysql` normally.
+---
 
 ## الصلاحيات | Access rules
 
-- One role per account. The initial roles are Administrator, Purchasing, Sales and Inventory.
-- The 31 implemented permissions include `reports.sales/purchases/inventory`, purchases, `prices.view/manage` and
-  `sales.view/manage/post`. Purchase receipt needs `purchases.receive` plus
-  `inventory.post`; sales confirmation needs `sales.post` plus `inventory.post`.
-  Generic posting/reversal permissions apply to the internal engine, not manual forms.
-- Dashboard access alone grants no business report data. Each report permission
-  controls its matching dashboard section too; report-only users do not gain document
-  access. Account-only landing pages continue to show access details without metrics.
-- New permissions are granted to the protected Administrator role. Existing customized roles are preserved; assign their new permissions explicitly in the roles screen.
-- Custom roles can use any subset of the existing permission catalogue; no public registration endpoint exists.
-- A manager cannot grant a role or permission exceeding their own access, or change a more privileged account. The system administrator role is protected.
-- At least one active administrator must remain. Account updates revoke old sessions; a user editing their own account keeps the current session only if the resulting account is active.
-- Accounts are disabled, not deleted. Unused custom roles can be deleted. Assigned and system roles cannot.
-- The login endpoint is rate limited by account/IP and by IP. Passwords are hashed; forms require CSRF tokens.
+- دور واحد لكل حساب: الأدوار الافتراضية هي Administrator، Purchasing، Sales، Inventory.
+- يشمل النظام 31 صلاحية محكمة منها `reports.sales/purchases/inventory`، والمشتريات، وإدارة وعرض الأسعار، والمبيعات. استلام المشتريات يتطلب `purchases.receive` مع `inventory.post`. اعتماد المبيعات يتطلب `sales.post` مع `inventory.post`.
+- الوصول للوحة التحكم (`/dashboard`) لا يمنح بيانات التقارير تلقائياً؛ كل بطاقة تقرير محكومة بصلاحيتها الخاصة.
+- يجب بقاء مدير نظام نشط واحد على الأقل. تحديث بيانات الحساب يُبطل الجلسات القديمة للمستخدم لدواعي الأمان.
+- الحسابات تُعطّل ولا تُحذف.
+- نقطة نهاية تسجيل الدخول محمية بحدود معدل الطلبات (Rate Limiting) ورموز CSRF.
 
-## الاختبارات | Verification
+---
+
+## الاختبارات والتحقق البرمجي | Verification and testing
+
+### 1. الفحوصات الآلية القياسية | Standard automated tests
 
 ```powershell
 ./scripts/php.ps1 artisan test
@@ -96,7 +118,9 @@ composer validate --strict --no-check-publish
 composer audit --locked
 ```
 
-Real MySQL regression checks are separate from the in-memory suite:
+تعتمد حزمة الاختبارات الآلية الأساسية على قاعدة بيانات SQLite معزولة في الذاكرة لضمان السرعة وعزل الاختبارات، مع وجود حارس إقلاع يرفض أي تداخل مع قواعد MySQL أثناء تشغيلها.
+
+### 2. فحوصات التزامن والتكامل على MySQL الحقيقي | Real MySQL checks
 
 ```powershell
 ./scripts/php.ps1 tests/MySql/stock-concurrency.php
@@ -108,61 +132,31 @@ Real MySQL regression checks are separate from the in-memory suite:
 ./scripts/php.ps1 artisan erp:check-stock
 ```
 
-These scripts require a local/testing MySQL environment and process spawning.
-They create tagged verification records/temporary identities for independent
-connections, verify ownership and references before cleanup, and remove only their
-own fixtures. Generated worker artifacts stay under ignored `.cache/mysql-stock-tests/`
-and `.cache/mysql-purchase-tests/`, `.cache/mysql-sales-tests/`.
+تستخدم هذه السكربتات قاعدة بيانات MySQL وتتحقق من استقرار التزامن والحركات النقدية والمخزنية بدقة 6 منازل عشرية دون استخدام أرقام عائمة.
 
-The installer check uses separate ignored `.env` files and randomly named temporary
-schemas. It verifies fresh setup, database creation, repeat setup, cancellation,
-bad credentials and refusal of an unrelated nonempty database, then removes only
-its owned schemas. Its MySQL account must have CREATE/DROP DATABASE permission.
+### 3. اختبار الحمل المحلي (20 مستخدماً) وإخلاء المسؤولية | Local load benchmark & disclaimer
 
-The main automated suite forces an isolated SQLite database in memory. A bootstrap guard checks the resolved configuration before database migrations and refuses cached MySQL, file SQLite or URL overrides. If tests stop at this guard, run `./scripts/php.ps1 artisan config:clear` and retry. The suite covers authentication, revoked sessions, access boundaries, privilege escalation, last-administrator protection, role changes, validation, escaped output, CSRF, safe landing pages, stock posting invariants and both languages. The standalone MySQL scripts above deliberately use the configured local database without dropping tables.
+تم تنفيذ وتوثيق قياس أداء محلي تصاعدي ومستقر لـ 20 مستخدماً متزامناً عبر أداة k6 وNginx وخادم MySQL 8.4 معزول على منفذ 3307. النتائج كاملة ومفصلة في:
+[`docs/audit/evidence/load-test/round2-steady/README.md`](file:///c:/Users/albna/Documents/minismarterp2/docs/audit/evidence/load-test/round2-steady/README.md)
 
-Verified locally: 147 automated tests / 924 assertions, including Windows setup/
-literal environment values/bootstrap checks and full purchase/receipt/
-multi-line sale/FEFO/replay/reconciliation, report scope/date/pagination/stock alerts,
-dashboard permission isolation, customer tier/date/
-unit selection, exact conversion and rounding, overlap/version guards, sales snapshots,
-FEFO confirmation/replay/rollback, stale pricing and internal/HTTP access boundaries.
-MySQL multi-process checks cover competing sales, same/different confirmation keys,
-edit/cancel races, overlapping prices, current catalog/customer pricing and actor/
-permissions despite an older REPEATABLE READ snapshot, fresh drafts after that
-snapshot, rollback/FKs and exact decimal persistence. Existing stock/purchase
-concurrency harnesses are retained. Tagged fixtures and temporary identities were
-removed. Full HTTP load testing remains future stabilization work.
+**النتائج المحققة محلياً:**
+- نسبة نجاح 100% عبر 9,554 طلباً دون أي فشل HTTP أو أخطاء حرجة.
+- صفر استعلامات بطيئة (أقل من 0.5 ثانية).
+- تطابق كامل في دفتر الأستاذ والمخزون بنسبة خطأ 0% عبر `erp:check-stock`.
 
-The MySQL workflow/report check creates actual typed purchase receipts and sales,
-asserts each allocation's product/line/unit, and verifies an exact report total of
-10000000000067.490036, beyond 64-bit integer millionths. No floating-point report
-sums are used. All tagged test identities/documents/stock are removed afterward.
+> [!IMPORTANT]
+> **إخلاء مسؤولية مهم حول أداء الخوادم السحابية وسيرفرات العملاء:**  
+> تم تنفيذ اختبار الحمل المشار إليه أعلاه على جهاز محلي مخصص للاختبار بمواصفات محددة (معالج AMD Ryzen 7 7735HS بـ 8 أنوية و16 مساراً، وذاكرة 16 جيجابايت، ونظام Windows 11، وأقراص NVMe محلية). هذه الأرقام والمقاييس **تخص هذا الجهاز المحلي حصراً في ظروف الاختبار المعزولة**، ولا تمثل بأي حال من الأحوال ضماناً أو تعهداً تعاقدياً بمستوى الأداء أو زمن الاستجابة على خادم العميل المستقبلي؛ حيث تختلف بيئات الإنتاج في مواصفات المعالجات، ومستويات المحاكاة الافتراضية (Virtualization)، وسرعات الشبكة والكمون، وسعة الذاكرة، وعدد المستأجرين المتزامنين (Multi-tenancy).
+
+---
 
 ## لوحة الأعمال والتقارير | Business dashboard and reports
 
-`/dashboard` shows only report domains the account is permitted to view. Its period
-defaults to the current business month through today. `/reports` links to sales,
-purchases and inventory. Financial reports count confirmed sales and received
-purchases by actual posting time, not commercial order date. Date endpoints are
-inclusive business days in `INVENTORY_TIMEZONE` (Asia/Aden by default), translated
-to half-open UTC boundaries. Customer/supplier filters apply to all totals and rows.
-Money and piece totals include all filtered documents, independent of pagination;
-FEFO splits never multiply document amounts. Exact sums use installed Brick Math,
-already required by Laravel's decimal casts. Reads use the configured InnoDB
-REPEATABLE READ transaction snapshot and never adjust stock or post operations.
+تعرض صفحة `/dashboard` مجالات التقارير المصرح بها للحساب فقط. الفترات الزمنية الافتراضية هي من أول يوم في الشهر التجاري الحالي وحتى اليوم بالتوقيت المحلي المعتمد للمخزون (`Asia/Aden` افتراضياً).
 
-Inventory reports are current main-warehouse balances, not a historical period.
-Active products at or below their sellable reorder level trigger low-stock alerts.
-Zero stock with reorder level0 qualifies. Expiry alerts include positive physical
-stock, including inactive products; near-expiry dates span today through today+N,
-inclusive (default30 days, selectable1..365). Expired is strictly before today.
-No-date batches are not expiry alerts. Product/batch lists paginate separately.
-Optional q/product/alert filters and report links are available in both languages.
+تقارير المخزون تعكس الأرصدة الحالية في المستودع الرئيسي، وتُظهر تنبيهات النقص (Sellable <= Reorder Level) وتنبيهات الصلاحية (Near Expiry و Expired). لا يتم تعديل أي رصيد مخزني من خلال شاشات العرض أو التقارير.
 
-Phase5's deferred multi-line allocation test is now automated in the full workflow
-tests. Independent phase6 review found no material issue; one minor optional query
-optimization remains documented in phase6 (an unused eager-loaded user relation).
+---
 
 ## المشتريات | Purchases
 
@@ -231,13 +225,16 @@ The movement ledger is the source of truth; `inventory.quantity` is a transactio
 
 Posting timestamps are UTC. Expiration dates are valid through the end of their day in `INVENTORY_TIMEZONE` (default `Asia/Aden`). Expiry changes sellability only; it never silently writes a movement. Inactive products retain physical stock but cannot be issued. Carton factors and batch number/dates become read-only after the first movement.
 
-## النشر | Deployment
+## النشر في الإنتاج | Production deployment
 
-For a future production deployment: configure the web root as `public/`, PHP 8.4+ with `pdo_mysql`, HTTPS, `APP_ENV=production`, `APP_DEBUG=false`, a correct HTTPS `APP_URL`, and `SESSION_SECURE_COOKIE=true`. Protect `.env`, keep a persistent `APP_KEY`, and make only `storage/` and `bootstrap/cache/` writable by PHP. Use a new dedicated database and back it up before schema changes. Configure a real web server; the development server is local only.
+للنشر المستقبلي في بيئة الإنتاج:
+- إعداد جذر خادم الويب على المجلد `public/`.
+- استخدام PHP 8.4+ مع تفعيل `pdo_mysql` و OPcache.
+- تفعيل بروتوكول HTTPS وضبط `APP_ENV=production` و `APP_DEBUG=false` و `SESSION_SECURE_COOKIE=true`.
+- حماية ملف `.env` والحفاظ على ثبات `APP_KEY`.
+- قصر صلاحيات الكتابة لخادم الويب على مجلدي `storage/` و `bootstrap/cache/`.
+- استخدام خادم قاعدة بيانات MySQL مستقل وتفعيل النسخ الاحتياطي الدوري.
+- لا يتطلب النظام مشغلات طوابير (Queues) أو Redis أو خدمات AI في نطاق هذه المرحلة.
 
-No queue worker, Redis, Node runtime, public API or AI service is required for this phase.
-
-See [phase 1](docs/phase-1.md), [phase 2](docs/phase-2.md), [phase 3](docs/phase-3.md)
-and [phase 4](docs/phase-4.md), [phase 5](docs/phase-5.md), [phase 6](docs/phase-6.md).
-Broader production load/deployment checks and AI training/evaluation/integration
-require separate requests; this phase does not claim production load certification.
+راجع وثائق المراحل التفصيلية:
+[Phase 1](docs/phase-1.md) | [Phase 2](docs/phase-2.md) | [Phase 3](docs/phase-3.md) | [Phase 4](docs/phase-4.md) | [Phase 5](docs/phase-5.md) | [Phase 6](docs/phase-6.md).

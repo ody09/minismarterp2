@@ -1,0 +1,122 @@
+﻿[
+    {
+        "id":  1,
+        "email":  "admin1@bench.local",
+        "role":  "admin",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  2,
+        "email":  "purchasing1@bench.local",
+        "role":  "purchasing",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  3,
+        "email":  "sales1@bench.local",
+        "role":  "sales",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  4,
+        "email":  "inventory1@bench.local",
+        "role":  "inventory",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  5,
+        "email":  "admin2@bench.local",
+        "role":  "admin",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  6,
+        "email":  "purchasing2@bench.local",
+        "role":  "purchasing",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  7,
+        "email":  "sales2@bench.local",
+        "role":  "sales",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  8,
+        "email":  "inventory2@bench.local",
+        "role":  "inventory",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  9,
+        "email":  "admin3@bench.local",
+        "role":  "admin",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  10,
+        "email":  "purchasing3@bench.local",
+        "role":  "purchasing",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  11,
+        "email":  "sales3@bench.local",
+        "role":  "sales",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  12,
+        "email":  "inventory3@bench.local",
+        "role":  "inventory",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  13,
+        "email":  "admin4@bench.local",
+        "role":  "admin",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  14,
+        "email":  "purchasing4@bench.local",
+        "role":  "purchasing",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  15,
+        "email":  "sales4@bench.local",
+        "role":  "sales",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  16,
+        "email":  "inventory4@bench.local",
+        "role":  "inventory",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  17,
+        "email":  "admin5@bench.local",
+        "role":  "admin",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  18,
+        "email":  "purchasing5@bench.local",
+        "role":  "purchasing",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  19,
+        "email":  "sales5@bench.local",
+        "role":  "sales",
+        "password":  "REDACTED_PASSWORD"
+    },
+    {
+        "id":  20,
+        "email":  "inventory5@bench.local",
+        "role":  "inventory",
+        "password":  "REDACTED_PASSWORD"
+    }
+]

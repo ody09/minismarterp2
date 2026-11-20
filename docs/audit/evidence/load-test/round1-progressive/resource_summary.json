@@ -1,0 +1,57 @@
+{
+    "warmup": {
+        "samples": 10,
+        "cpu_avg": 7.7,
+        "cpu_peak": "13",
+        "avail_mem_avg_mb": 1873.3,
+        "avail_mem_min_mb": "1850",
+        "mysql_mem_avg_mb": 624.3,
+        "mysql_mem_peak_mb": "642.9",
+        "php_mem_avg_mb": 729.2,
+        "php_mem_peak_mb": "743"
+    },
+    "5vu": {
+        "samples": 20,
+        "cpu_avg": 11.3,
+        "cpu_peak": "40.9",
+        "avail_mem_avg_mb": 2113.6,
+        "avail_mem_min_mb": "1557.5",
+        "mysql_mem_avg_mb": 620.7,
+        "mysql_mem_peak_mb": "623.5",
+        "php_mem_avg_mb": 739.2,
+        "php_mem_peak_mb": "745"
+    },
+    "10vu": {
+        "samples": 19,
+        "cpu_avg": 20,
+        "cpu_peak": "70.6",
+        "avail_mem_avg_mb": 2043,
+        "avail_mem_min_mb": "1783.3",
+        "mysql_mem_avg_mb": 624.4,
+        "mysql_mem_peak_mb": "626.1",
+        "php_mem_avg_mb": 705.1,
+        "php_mem_peak_mb": "741.1"
+    },
+    "20vu": {
+        "samples": 97,
+        "cpu_avg": 29.4,
+        "cpu_peak": "56.6",
+        "avail_mem_avg_mb": 2423.1,
+        "avail_mem_min_mb": "1882.7",
+        "mysql_mem_avg_mb": 629.1,
+        "mysql_mem_peak_mb": "632.4",
+        "php_mem_avg_mb": 694.4,
+        "php_mem_peak_mb": "701.6"
+    },
+    "post": {
+        "samples": 5,
+        "cpu_avg": 19.1,
+        "cpu_peak": "29.8",
+        "avail_mem_avg_mb": 2260.7,
+        "avail_mem_min_mb": "2235.6",
+        "mysql_mem_avg_mb": 630.3,
+        "mysql_mem_peak_mb": "631.5",
+        "php_mem_avg_mb": 694,
+        "php_mem_peak_mb": "701.8"
+    }
+}

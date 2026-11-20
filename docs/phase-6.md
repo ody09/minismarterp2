@@ -71,3 +71,18 @@ prior-day filtering produced zero. Reducing near expiry from30 to7 reduced eligi
 positive batches from2 to1. Console had no errors. Test-labelled screenshots contain
 now-removed disposable records; final dashboard/report-index images show actual
 post-cleanup application data. No real user records or credentials were changed.
+
+---
+
+## Current Project Status & Post-Phase 6 Roadmap (Updated 2026-11-20)
+
+### 1. Completed Post-Phase 6 Milestones
+- **Audit Findings Resolution (Commit `266ef20`):** Addressed the system audit items on `codex/audit-fixes`: implemented `NavigationComposer` to collapse navigation permission checks into a single query (budget = 1), resolved the date-order filter bug in inventory movements, corrected the sales cancellation translation keys, and upgraded Symfony components to resolve security advisories (`composer audit` clean).
+- **20-VU Steady-State Local Load Benchmark (Commit `e66cd66`):** Completed and documented a rigorous 20 concurrent user flat plateau benchmark on isolated portable services (Nginx 8088, 16 `php-cgi` workers, MySQL 3307). Delivered 100% request success rate across 9,554 requests, zero slow queries (>0.5s), and 100% stock ledger consistency confirmed post-run via `erp:check-stock`.
+- **One-Click Daily Operation (`start-erp.cmd`):** Created and verified an idempotent Windows launcher that starts local MySQL 8.4 on port 3306 (`smart_mini_erp` with data in `.cache/mysql-daily-data`) and Laravel on port 8000 in hidden background windows, verifies application and database readiness, and launches `/login` in the default browser. Paired with [`stop-erp.cmd`](file:///c:/Users/albna/Documents/minismarterp2/stop-erp.cmd) for clean shutdown.
+
+### 2. Remaining & Deferred Tasks
+- **Inventory Count Adjustments & Opening Balances:** Physical inventory cycle counts and manual balance overrides remain explicitly deferred by owner specification.
+- **Commercial Extensions:** Customer/supplier returns, tax invoices, receipt/payment accounting, and partial shipments belong to future functional phases.
+- **Hardware Capacity & Production Disclaimer:** The 20-VU load test results are specific to the local workstation (AMD Ryzen 7 7735HS, 16 GB RAM, local NVMe, Windows 11) and do not represent an SLA or performance guarantee for client production servers.
+- **AI Phase Status:** The AI phase has **NOT started**. No AI models, pipelines, or integrations exist in the current application. Project stakeholders must formally define model objectives (e.g., demand forecasting, auto-replenishment, anomaly detection), training/inference data sources and schemas, and measurable evaluation benchmarks before any AI development work begins.

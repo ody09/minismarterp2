@@ -1,0 +1,1502 @@
+{
+    "sales_report": [
+        {
+            "index": 1,
+            "raw_sql": "select * from `users` where `users`.`id` = ? limit 1",
+            "bindings": [
+                1
+            ],
+            "time_ms": 1.07,
+            "executable_sql": "select * from `users` where `users`.`id` = 1 limit 1",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "users",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 2,
+            "raw_sql": "select * from `roles` where `roles`.`id` = ? limit 1",
+            "bindings": [
+                1
+            ],
+            "time_ms": 3.04,
+            "executable_sql": "select * from `roles` where `roles`.`id` = 1 limit 1",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "roles",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 3,
+            "raw_sql": "select exists(select * from `permissions` inner join `role_permissions` on `permissions`.`id` = `role_permissions`.`permission_id` where `role_permissions`.`role_id` = ? and `code` = ?) as `exists`",
+            "bindings": [
+                1,
+                "reports.sales"
+            ],
+            "time_ms": 3.77,
+            "executable_sql": "select exists(select * from `permissions` inner join `role_permissions` on `permissions`.`id` = `role_permissions`.`permission_id` where `role_permissions`.`role_id` = 1 and `code` = 'reports.sales') as `exists`",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": null,
+                    "partitions": null,
+                    "type": null,
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": null,
+                    "filtered": null,
+                    "Extra": "No tables used"
+                },
+                {
+                    "id": 2,
+                    "select_type": "SUBQUERY",
+                    "table": "permissions",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY,permissions_code_unique",
+                    "key": "permissions_code_unique",
+                    "key_len": "322",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                },
+                {
+                    "id": 2,
+                    "select_type": "SUBQUERY",
+                    "table": "role_permissions",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY,role_permissions_permission_id_foreign",
+                    "key": "PRIMARY",
+                    "key_len": "16",
+                    "ref": "const,const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                }
+            ]
+        },
+        {
+            "index": 4,
+            "raw_sql": "select `id`, `total_amount` from `sales_orders` where `status` = ? and `confirmed_at` >= ? and `confirmed_at` < ?",
+            "bindings": [
+                "confirmed",
+                "2026-05-31T21:00:00.000000Z",
+                "2026-11-15T21:00:00.000000Z"
+            ],
+            "time_ms": 16.54,
+            "executable_sql": "select `id`, `total_amount` from `sales_orders` where `status` = 'confirmed' and `confirmed_at` >= '2026-05-31 21:00:00' and `confirmed_at` < '2026-11-15 21:00:00'",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "sales_orders",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "sales_orders_status_index",
+                    "key": "sales_orders_status_index",
+                    "key_len": "1",
+                    "ref": "const",
+                    "rows": 3171,
+                    "filtered": 11.108888626098633,
+                    "Extra": "Using where"
+                }
+            ]
+        },
+        {
+            "index": 5,
+            "raw_sql": "select `sales_order_items`.`quantity`, `sales_order_items`.`conversion_factor` from `sales_order_items` inner join (select `sales_orders`.`id` from `sales_orders` where `status` = ? and `confirmed_at` >= ? and `confirmed_at` < ?) as `documents` on `sales_order_items`.`sales_order_id` = `documents`.`id`",
+            "bindings": [
+                "confirmed",
+                "2026-05-31T21:00:00.000000Z",
+                "2026-11-15T21:00:00.000000Z"
+            ],
+            "time_ms": 22.6,
+            "executable_sql": "select `sales_order_items`.`quantity`, `sales_order_items`.`conversion_factor` from `sales_order_items` inner join (select `sales_orders`.`id` from `sales_orders` where `status` = 'confirmed' and `confirmed_at` >= '2026-05-31 21:00:00' and `confirmed_at` < '2026-11-15 21:00:00') as `documents` on `sales_order_items`.`sales_order_id` = `documents`.`id`",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "sales_orders",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,sales_orders_status_index",
+                    "key": "sales_orders_status_index",
+                    "key_len": "1",
+                    "ref": "const",
+                    "rows": 3171,
+                    "filtered": 11.108888626098633,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "sales_order_items",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "sales_order_items_sales_order_id_line_number_unique,sale_product_unit_unique",
+                    "key": "sales_order_items_sales_order_id_line_number_unique",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.sales_orders.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 6,
+            "raw_sql": "select count(*) as `aggregate` from `sales_orders` where `status` = ? and `confirmed_at` >= ? and `confirmed_at` < ?",
+            "bindings": [
+                "confirmed",
+                "2026-05-31T21:00:00.000000Z",
+                "2026-11-15T21:00:00.000000Z"
+            ],
+            "time_ms": 4.05,
+            "executable_sql": "select count(*) as `aggregate` from `sales_orders` where `status` = 'confirmed' and `confirmed_at` >= '2026-05-31 21:00:00' and `confirmed_at` < '2026-11-15 21:00:00'",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "sales_orders",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "sales_orders_status_index",
+                    "key": "sales_orders_status_index",
+                    "key_len": "1",
+                    "ref": "const",
+                    "rows": 3171,
+                    "filtered": 11.108888626098633,
+                    "Extra": "Using where"
+                }
+            ]
+        },
+        {
+            "index": 7,
+            "raw_sql": "select `sales_orders`.*, (select sum(quantity * conversion_factor) from `sales_order_items` where `sales_orders`.`id` = `sales_order_items`.`sales_order_id`) as `total_pieces` from `sales_orders` where `status` = ? and `confirmed_at` >= ? and `confirmed_at` < ? order by `confirmed_at` desc, `id` desc limit 15 offset 0",
+            "bindings": [
+                "confirmed",
+                "2026-05-31T21:00:00.000000Z",
+                "2026-11-15T21:00:00.000000Z"
+            ],
+            "time_ms": 9.41,
+            "executable_sql": "select `sales_orders`.*, (select sum(quantity * conversion_factor) from `sales_order_items` where `sales_orders`.`id` = `sales_order_items`.`sales_order_id`) as `total_pieces` from `sales_orders` where `status` = 'confirmed' and `confirmed_at` >= '2026-05-31 21:00:00' and `confirmed_at` < '2026-11-15 21:00:00' order by `confirmed_at` desc, `id` desc limit 15 offset 0",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": "sales_orders",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "sales_orders_status_index",
+                    "key": "sales_orders_status_index",
+                    "key_len": "1",
+                    "ref": "const",
+                    "rows": 3171,
+                    "filtered": 11.108888626098633,
+                    "Extra": "Using where; Using filesort"
+                },
+                {
+                    "id": 2,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "sales_order_items",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "sales_order_items_sales_order_id_line_number_unique,sale_product_unit_unique",
+                    "key": "sales_order_items_sales_order_id_line_number_unique",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.sales_orders.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        }
+    ],
+    "purchases_report": [
+        {
+            "index": 1,
+            "raw_sql": "select * from `users` where `users`.`id` = ? limit 1",
+            "bindings": [
+                1
+            ],
+            "time_ms": 0.23,
+            "executable_sql": "select * from `users` where `users`.`id` = 1 limit 1",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "users",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 2,
+            "raw_sql": "select * from `roles` where `roles`.`id` = ? limit 1",
+            "bindings": [
+                1
+            ],
+            "time_ms": 0.28,
+            "executable_sql": "select * from `roles` where `roles`.`id` = 1 limit 1",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "roles",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 3,
+            "raw_sql": "select exists(select * from `permissions` inner join `role_permissions` on `permissions`.`id` = `role_permissions`.`permission_id` where `role_permissions`.`role_id` = ? and `code` = ?) as `exists`",
+            "bindings": [
+                1,
+                "reports.purchases"
+            ],
+            "time_ms": 0.23,
+            "executable_sql": "select exists(select * from `permissions` inner join `role_permissions` on `permissions`.`id` = `role_permissions`.`permission_id` where `role_permissions`.`role_id` = 1 and `code` = 'reports.purchases') as `exists`",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": null,
+                    "partitions": null,
+                    "type": null,
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": null,
+                    "filtered": null,
+                    "Extra": "No tables used"
+                },
+                {
+                    "id": 2,
+                    "select_type": "SUBQUERY",
+                    "table": "permissions",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY,permissions_code_unique",
+                    "key": "permissions_code_unique",
+                    "key_len": "322",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                },
+                {
+                    "id": 2,
+                    "select_type": "SUBQUERY",
+                    "table": "role_permissions",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY,role_permissions_permission_id_foreign",
+                    "key": "PRIMARY",
+                    "key_len": "16",
+                    "ref": "const,const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                }
+            ]
+        },
+        {
+            "index": 4,
+            "raw_sql": "select `id`, `total_amount` from `purchase_orders` where `status` = ? and `received_at` >= ? and `received_at` < ?",
+            "bindings": [
+                "received",
+                "2025-12-31T21:00:00.000000Z",
+                "2026-10-31T21:00:00.000000Z"
+            ],
+            "time_ms": 15.28,
+            "executable_sql": "select `id`, `total_amount` from `purchase_orders` where `status` = 'received' and `received_at` >= '2025-12-31 21:00:00' and `received_at` < '2026-10-31 21:00:00'",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "purchase_orders",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "purchase_orders_status_index",
+                    "key": "purchase_orders_status_index",
+                    "key_len": "1",
+                    "ref": "const",
+                    "rows": 3540,
+                    "filtered": 11.108888626098633,
+                    "Extra": "Using where"
+                }
+            ]
+        },
+        {
+            "index": 5,
+            "raw_sql": "select `purchase_order_items`.`quantity`, `purchase_order_items`.`conversion_factor` from `purchase_order_items` inner join (select `purchase_orders`.`id` from `purchase_orders` where `status` = ? and `received_at` >= ? and `received_at` < ?) as `documents` on `purchase_order_items`.`purchase_order_id` = `documents`.`id`",
+            "bindings": [
+                "received",
+                "2025-12-31T21:00:00.000000Z",
+                "2026-10-31T21:00:00.000000Z"
+            ],
+            "time_ms": 20.74,
+            "executable_sql": "select `purchase_order_items`.`quantity`, `purchase_order_items`.`conversion_factor` from `purchase_order_items` inner join (select `purchase_orders`.`id` from `purchase_orders` where `status` = 'received' and `received_at` >= '2025-12-31 21:00:00' and `received_at` < '2026-10-31 21:00:00') as `documents` on `purchase_order_items`.`purchase_order_id` = `documents`.`id`",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "purchase_orders",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,purchase_orders_status_index",
+                    "key": "purchase_orders_status_index",
+                    "key_len": "1",
+                    "ref": "const",
+                    "rows": 3540,
+                    "filtered": 11.108888626098633,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "purchase_order_items",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "purchase_order_items_purchase_order_id_line_number_unique",
+                    "key": "purchase_order_items_purchase_order_id_line_number_unique",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.purchase_orders.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 6,
+            "raw_sql": "select count(*) as `aggregate` from `purchase_orders` where `status` = ? and `received_at` >= ? and `received_at` < ?",
+            "bindings": [
+                "received",
+                "2025-12-31T21:00:00.000000Z",
+                "2026-10-31T21:00:00.000000Z"
+            ],
+            "time_ms": 3.33,
+            "executable_sql": "select count(*) as `aggregate` from `purchase_orders` where `status` = 'received' and `received_at` >= '2025-12-31 21:00:00' and `received_at` < '2026-10-31 21:00:00'",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "purchase_orders",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "purchase_orders_status_index",
+                    "key": "purchase_orders_status_index",
+                    "key_len": "1",
+                    "ref": "const",
+                    "rows": 3540,
+                    "filtered": 11.108888626098633,
+                    "Extra": "Using where"
+                }
+            ]
+        },
+        {
+            "index": 7,
+            "raw_sql": "select `purchase_orders`.*, (select sum(quantity * conversion_factor) from `purchase_order_items` where `purchase_orders`.`id` = `purchase_order_items`.`purchase_order_id`) as `total_pieces` from `purchase_orders` where `status` = ? and `received_at` >= ? and `received_at` < ? order by `received_at` desc, `id` desc limit 15 offset 0",
+            "bindings": [
+                "received",
+                "2025-12-31T21:00:00.000000Z",
+                "2026-10-31T21:00:00.000000Z"
+            ],
+            "time_ms": 7.37,
+            "executable_sql": "select `purchase_orders`.*, (select sum(quantity * conversion_factor) from `purchase_order_items` where `purchase_orders`.`id` = `purchase_order_items`.`purchase_order_id`) as `total_pieces` from `purchase_orders` where `status` = 'received' and `received_at` >= '2025-12-31 21:00:00' and `received_at` < '2026-10-31 21:00:00' order by `received_at` desc, `id` desc limit 15 offset 0",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": "purchase_orders",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "purchase_orders_status_index",
+                    "key": "purchase_orders_status_index",
+                    "key_len": "1",
+                    "ref": "const",
+                    "rows": 3540,
+                    "filtered": 11.108888626098633,
+                    "Extra": "Using where; Using filesort"
+                },
+                {
+                    "id": 2,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "purchase_order_items",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "purchase_order_items_purchase_order_id_line_number_unique",
+                    "key": "purchase_order_items_purchase_order_id_line_number_unique",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.purchase_orders.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        }
+    ],
+    "inventory_report": [
+        {
+            "index": 1,
+            "raw_sql": "select * from `users` where `users`.`id` = ? limit 1",
+            "bindings": [
+                1
+            ],
+            "time_ms": 0.22,
+            "executable_sql": "select * from `users` where `users`.`id` = 1 limit 1",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "users",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 2,
+            "raw_sql": "select * from `roles` where `roles`.`id` = ? limit 1",
+            "bindings": [
+                1
+            ],
+            "time_ms": 0.2,
+            "executable_sql": "select * from `roles` where `roles`.`id` = 1 limit 1",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "roles",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 3,
+            "raw_sql": "select exists(select * from `permissions` inner join `role_permissions` on `permissions`.`id` = `role_permissions`.`permission_id` where `role_permissions`.`role_id` = ? and `code` = ?) as `exists`",
+            "bindings": [
+                1,
+                "reports.inventory"
+            ],
+            "time_ms": 0.22,
+            "executable_sql": "select exists(select * from `permissions` inner join `role_permissions` on `permissions`.`id` = `role_permissions`.`permission_id` where `role_permissions`.`role_id` = 1 and `code` = 'reports.inventory') as `exists`",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": null,
+                    "partitions": null,
+                    "type": null,
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": null,
+                    "filtered": null,
+                    "Extra": "No tables used"
+                },
+                {
+                    "id": 2,
+                    "select_type": "SUBQUERY",
+                    "table": "permissions",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY,permissions_code_unique",
+                    "key": "permissions_code_unique",
+                    "key_len": "322",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                },
+                {
+                    "id": 2,
+                    "select_type": "SUBQUERY",
+                    "table": "role_permissions",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "PRIMARY,role_permissions_permission_id_foreign",
+                    "key": "PRIMARY",
+                    "key_len": "16",
+                    "ref": "const,const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                }
+            ]
+        },
+        {
+            "index": 4,
+            "raw_sql": "select * from `warehouses` where `code` = ? limit 1",
+            "bindings": [
+                "main"
+            ],
+            "time_ms": 2.92,
+            "executable_sql": "select * from `warehouses` where `code` = 'main' limit 1",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "warehouses",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "warehouses_code_unique",
+                    "key": "warehouses_code_unique",
+                    "key_len": "162",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 5,
+            "raw_sql": "select * from `warehouses` where `code` = ? limit 1",
+            "bindings": [
+                "main"
+            ],
+            "time_ms": 0.24,
+            "executable_sql": "select * from `warehouses` where `code` = 'main' limit 1",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "warehouses",
+                    "partitions": null,
+                    "type": "const",
+                    "possible_keys": "warehouses_code_unique",
+                    "key": "warehouses_code_unique",
+                    "key_len": "162",
+                    "ref": "const",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 6,
+            "raw_sql": "select count(*) as `aggregate` from (select `products`.*, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ?) as `physical_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `products`.`is_active` = ? and (`product_batches`.`expiration_date` is null or `product_batches`.`expiration_date` >= ?)) as `sellable_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `product_batches`.`expiration_date` < ?) as `expired_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `inventory`.`quantity` > ? and date(`product_batches`.`expiration_date`) >= ? and date(`product_batches`.`expiration_date`) <= ?) as `near_quantity` from `products`) as `products`",
+            "bindings": [
+                1,
+                1,
+                true,
+                "2026-11-17",
+                1,
+                "2026-11-17",
+                1,
+                0,
+                "2026-11-17",
+                "2026-12-17"
+            ],
+            "time_ms": 45.83,
+            "executable_sql": "select count(*) as `aggregate` from (select `products`.*, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1) as `physical_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `products`.`is_active` = '1' and (`product_batches`.`expiration_date` is null or `product_batches`.`expiration_date` >= '2026-11-17')) as `sellable_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `product_batches`.`expiration_date` < '2026-11-17') as `expired_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `inventory`.`quantity` > 0 and date(`product_batches`.`expiration_date`) >= '2026-11-17' and date(`product_batches`.`expiration_date`) <= '2026-12-17') as `near_quantity` from `products`) as `products`",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": "<derived2>",
+                    "partitions": null,
+                    "type": "ALL",
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": 200,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 2,
+                    "select_type": "DERIVED",
+                    "table": "products",
+                    "partitions": null,
+                    "type": "ALL",
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": 200,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 6,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 100,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 6,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 5,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 5,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 4,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 39.99699783325195,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 4,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 3,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                },
+                {
+                    "id": 3,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 7,
+            "raw_sql": "select count(*) as `aggregate` from (select `products`.*, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ?) as `physical_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `products`.`is_active` = ? and (`product_batches`.`expiration_date` is null or `product_batches`.`expiration_date` >= ?)) as `sellable_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `product_batches`.`expiration_date` < ?) as `expired_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `inventory`.`quantity` > ? and date(`product_batches`.`expiration_date`) >= ? and date(`product_batches`.`expiration_date`) <= ?) as `near_quantity` from `products`) as `products` where `products`.`is_active` = ? and COALESCE(products.sellable_quantity, 0) <= products.reorder_level",
+            "bindings": [
+                1,
+                1,
+                true,
+                "2026-11-17",
+                1,
+                "2026-11-17",
+                1,
+                0,
+                "2026-11-17",
+                "2026-12-17",
+                true
+            ],
+            "time_ms": 29.01,
+            "executable_sql": "select count(*) as `aggregate` from (select `products`.*, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1) as `physical_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `products`.`is_active` = '1' and (`product_batches`.`expiration_date` is null or `product_batches`.`expiration_date` >= '2026-11-17')) as `sellable_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `product_batches`.`expiration_date` < '2026-11-17') as `expired_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `inventory`.`quantity` > 0 and date(`product_batches`.`expiration_date`) >= '2026-11-17' and date(`product_batches`.`expiration_date`) <= '2026-12-17') as `near_quantity` from `products`) as `products` where `products`.`is_active` = '1' and COALESCE(products.sellable_quantity, 0) <= products.reorder_level",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": "<derived2>",
+                    "partitions": null,
+                    "type": "ALL",
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": 20,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 2,
+                    "select_type": "DERIVED",
+                    "table": "products",
+                    "partitions": null,
+                    "type": "ALL",
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": 200,
+                    "filtered": 10,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 6,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 100,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 6,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 5,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 5,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 4,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 39.99699783325195,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 4,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 3,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                },
+                {
+                    "id": 3,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 8,
+            "raw_sql": "select count(*) as `aggregate` from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` inner join `products` on `products`.`id` = `product_batches`.`product_id` where `inventory`.`warehouse_id` = ? and `inventory`.`quantity` > ? and date(`product_batches`.`expiration_date`) >= ? and date(`product_batches`.`expiration_date`) <= ?",
+            "bindings": [
+                1,
+                0,
+                "2026-11-17",
+                "2026-12-17"
+            ],
+            "time_ms": 14.95,
+            "executable_sql": "select count(*) as `aggregate` from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` inner join `products` on `products`.`id` = `product_batches`.`product_id` where `inventory`.`warehouse_id` = 1 and `inventory`.`quantity` > 0 and date(`product_batches`.`expiration_date`) >= '2026-11-17' and date(`product_batches`.`expiration_date`) <= '2026-12-17'",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 3081,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.inventory.batch_id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "products",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.product_batches.product_id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                }
+            ]
+        },
+        {
+            "index": 9,
+            "raw_sql": "select count(*) as `aggregate` from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` inner join `products` on `products`.`id` = `product_batches`.`product_id` where `inventory`.`warehouse_id` = ? and `inventory`.`quantity` > ? and date(`product_batches`.`expiration_date`) < ?",
+            "bindings": [
+                1,
+                0,
+                "2026-11-17"
+            ],
+            "time_ms": 10.13,
+            "executable_sql": "select count(*) as `aggregate` from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` inner join `products` on `products`.`id` = `product_batches`.`product_id` where `inventory`.`warehouse_id` = 1 and `inventory`.`quantity` > 0 and date(`product_batches`.`expiration_date`) < '2026-11-17'",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 3081,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.inventory.batch_id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "products",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.product_batches.product_id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                }
+            ]
+        },
+        {
+            "index": 10,
+            "raw_sql": "select count(*) as `aggregate` from (select `products`.*, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ?) as `physical_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `products`.`is_active` = ? and (`product_batches`.`expiration_date` is null or `product_batches`.`expiration_date` >= ?)) as `sellable_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `product_batches`.`expiration_date` < ?) as `expired_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `inventory`.`quantity` > ? and date(`product_batches`.`expiration_date`) >= ? and date(`product_batches`.`expiration_date`) <= ?) as `near_quantity` from `products`) as `products`",
+            "bindings": [
+                1,
+                1,
+                true,
+                "2026-11-17",
+                1,
+                "2026-11-17",
+                1,
+                0,
+                "2026-11-17",
+                "2026-12-17"
+            ],
+            "time_ms": 29.32,
+            "executable_sql": "select count(*) as `aggregate` from (select `products`.*, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1) as `physical_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `products`.`is_active` = '1' and (`product_batches`.`expiration_date` is null or `product_batches`.`expiration_date` >= '2026-11-17')) as `sellable_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `product_batches`.`expiration_date` < '2026-11-17') as `expired_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `inventory`.`quantity` > 0 and date(`product_batches`.`expiration_date`) >= '2026-11-17' and date(`product_batches`.`expiration_date`) <= '2026-12-17') as `near_quantity` from `products`) as `products`",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": "<derived2>",
+                    "partitions": null,
+                    "type": "ALL",
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": 200,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 2,
+                    "select_type": "DERIVED",
+                    "table": "products",
+                    "partitions": null,
+                    "type": "ALL",
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": 200,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 6,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 100,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 6,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 5,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 5,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 4,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 39.99699783325195,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 4,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 3,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                },
+                {
+                    "id": 3,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 11,
+            "raw_sql": "select `products`.* from (select `products`.*, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ?) as `physical_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `products`.`is_active` = ? and (`product_batches`.`expiration_date` is null or `product_batches`.`expiration_date` >= ?)) as `sellable_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `product_batches`.`expiration_date` < ?) as `expired_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = ? and `inventory`.`quantity` > ? and date(`product_batches`.`expiration_date`) >= ? and date(`product_batches`.`expiration_date`) <= ?) as `near_quantity` from `products`) as `products` order by `products`.`name` asc, `products`.`id` asc limit 15 offset 0",
+            "bindings": [
+                1,
+                1,
+                true,
+                "2026-11-17",
+                1,
+                "2026-11-17",
+                1,
+                0,
+                "2026-11-17",
+                "2026-12-17"
+            ],
+            "time_ms": 27.61,
+            "executable_sql": "select `products`.* from (select `products`.*, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1) as `physical_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `products`.`is_active` = '1' and (`product_batches`.`expiration_date` is null or `product_batches`.`expiration_date` >= '2026-11-17')) as `sellable_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `product_batches`.`expiration_date` < '2026-11-17') as `expired_quantity`, (select sum(`inventory`.`quantity`) from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` where `products`.`id` = `product_batches`.`product_id` and `inventory`.`warehouse_id` = 1 and `inventory`.`quantity` > 0 and date(`product_batches`.`expiration_date`) >= '2026-11-17' and date(`product_batches`.`expiration_date`) <= '2026-12-17') as `near_quantity` from `products`) as `products` order by `products`.`name` asc, `products`.`id` asc limit 15 offset 0",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "PRIMARY",
+                    "table": "<derived2>",
+                    "partitions": null,
+                    "type": "ALL",
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": 200,
+                    "filtered": 100,
+                    "Extra": "Using filesort"
+                },
+                {
+                    "id": 2,
+                    "select_type": "DERIVED",
+                    "table": "products",
+                    "partitions": null,
+                    "type": "ALL",
+                    "possible_keys": null,
+                    "key": null,
+                    "key_len": null,
+                    "ref": null,
+                    "rows": 200,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 6,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 100,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 6,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 5,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 5,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 4,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 39.99699783325195,
+                    "Extra": "Using where; Using index"
+                },
+                {
+                    "id": 4,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 3,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "product_batches_product_id_expiration_date_index",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.products.id",
+                    "rows": 30,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                },
+                {
+                    "id": 3,
+                    "select_type": "DEPENDENT SUBQUERY",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "16",
+                    "ref": "const,smart_mini_erp_perf.product_batches.id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        },
+        {
+            "index": 12,
+            "raw_sql": "select count(*) as `aggregate` from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` inner join `products` on `products`.`id` = `product_batches`.`product_id` where `inventory`.`warehouse_id` = ? and `inventory`.`quantity` > ?",
+            "bindings": [
+                1,
+                0
+            ],
+            "time_ms": 13.73,
+            "executable_sql": "select count(*) as `aggregate` from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` inner join `products` on `products`.`id` = `product_batches`.`product_id` where `inventory`.`warehouse_id` = 1 and `inventory`.`quantity` > 0",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 3081,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where"
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.inventory.batch_id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "products",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.product_batches.product_id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": "Using index"
+                }
+            ]
+        },
+        {
+            "index": 13,
+            "raw_sql": "select `inventory`.*, `products`.`id` as `product_id`, `products`.`name` as `product_name`, `products`.`is_active` as `product_active`, `product_batches`.`batch_number`, `product_batches`.`expiration_date` from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` inner join `products` on `products`.`id` = `product_batches`.`product_id` where `inventory`.`warehouse_id` = ? and `inventory`.`quantity` > ? order by product_batches.expiration_date IS NULL, `product_batches`.`expiration_date` asc, `inventory`.`id` asc limit 15 offset 0",
+            "bindings": [
+                1,
+                0
+            ],
+            "time_ms": 19.44,
+            "executable_sql": "select `inventory`.*, `products`.`id` as `product_id`, `products`.`name` as `product_name`, `products`.`is_active` as `product_active`, `product_batches`.`batch_number`, `product_batches`.`expiration_date` from `inventory` inner join `product_batches` on `product_batches`.`id` = `inventory`.`batch_id` inner join `products` on `products`.`id` = `product_batches`.`product_id` where `inventory`.`warehouse_id` = 1 and `inventory`.`quantity` > 0 order by product_batches.expiration_date IS NULL, `product_batches`.`expiration_date` asc, `inventory`.`id` asc limit 15 offset 0",
+            "explain": [
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "inventory",
+                    "partitions": null,
+                    "type": "ref",
+                    "possible_keys": "inventory_warehouse_id_batch_id_unique,inventory_batch_id_foreign",
+                    "key": "inventory_warehouse_id_batch_id_unique",
+                    "key_len": "8",
+                    "ref": "const",
+                    "rows": 3081,
+                    "filtered": 33.32999801635742,
+                    "Extra": "Using where; Using temporary; Using filesort"
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "product_batches",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY,product_batches_product_id_batch_number_unique,product_batches_product_id_expiration_date_index",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.inventory.batch_id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                },
+                {
+                    "id": 1,
+                    "select_type": "SIMPLE",
+                    "table": "products",
+                    "partitions": null,
+                    "type": "eq_ref",
+                    "possible_keys": "PRIMARY",
+                    "key": "PRIMARY",
+                    "key_len": "8",
+                    "ref": "smart_mini_erp_perf.product_batches.product_id",
+                    "rows": 1,
+                    "filtered": 100,
+                    "Extra": null
+                }
+            ]
+        }
+    ]
+}
