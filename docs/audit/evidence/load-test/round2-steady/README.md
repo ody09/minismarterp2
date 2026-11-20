@@ -258,6 +258,29 @@ powershell -ExecutionPolicy Bypass -File scripts/php.ps1 artisan erp:check-stock
 # Run the dynamic transaction reconciliation audit script
 powershell -ExecutionPolicy Bypass -File scripts/php.ps1 docs/audit/evidence/load-test/round2-steady/inspect_stock_delta.php
 ```
+
+---
+
+## 11. Environment Isolation & Client Server Disclaimer (Updated 2026-11-20)
+
+### 11.1 Daily Operation vs Benchmark Environment Separation
+- **Daily Operation Environment:** Runs on **port 3306** using database `smart_mini_erp` and data directory `.cache/mysql-daily-data`. It is orchestrated via [`start-erp.cmd`](file:///c:/Users/albna/Documents/minismarterp2/start-erp.cmd) and [`stop-erp.cmd`](file:///c:/Users/albna/Documents/minismarterp2/stop-erp.cmd).
+- **Benchmark & Test Environments:** Run strictly on **port 3307** using separate temporary data directories: `.cache/mysql-perf-data` (for this 20-VU benchmark) and `.cache/mysql-data` (for functional regression tests).
+- Under no circumstances does daily operation touch port 3307 or its benchmark artifacts.
+
+### 11.2 Production Server Performance Disclaimer
+The metrics documented in this report (100% success rate across 9,554 requests, p95 response time of 74.2ms, and 0 slow queries) were achieved on a dedicated local development workstation:
+- **Processor:** AMD Ryzen 7 7735HS (8 Cores, 16 Threads @ 3.20 GHz base).
+- **Memory:** 16.0 GB physical RAM.
+- **Storage:** Local high-speed NVMe SSD on Windows 11 Pro.
+- **Architecture:** Local loopback TCP networking (`127.0.0.1`) with zero external network latency.
+
+**Critical Notice:** These local benchmark results **do not guarantee or represent an SLA for the client's production server**. Actual client server capacity will depend entirely on production specifications that are currently undefined, including:
+1. Cloud vs bare-metal hardware and dedicated vCPU allocation.
+2. Hypervisor overhead, resource contention, and multi-tenancy.
+3. Network round-trip latency, ingress/egress bandwidth, and SSL/TLS termination overhead.
+4. Production storage I/O limits (IOPS/burst credits) and disk write throughput.
+5. Operating system tuning, FastCGI worker allocation, and production database buffer configurations.
 Output of `erp:check-stock`:
 ```
 Stock balances match the movement ledger. No quantities were changed.
